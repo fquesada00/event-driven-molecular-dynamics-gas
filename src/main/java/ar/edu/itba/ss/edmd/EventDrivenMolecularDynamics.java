@@ -3,27 +3,25 @@ package ar.edu.itba.ss.edmd;
 import java.util.PriorityQueue;
 
 public class EventDrivenMolecularDynamics {
-    private int N;
-    private double W;
-    private double H;
-    private double D;
+    private final PriorityQueue<Event> eventQueue;
+    private final Particle[] particles;
+    private int particleCount;
+    private double boxWidth;
+    private double boxHeight;
+    private double slitWidth;
 
-    private PriorityQueue<Event> events;
-
-    private EventParticle[] particles;
-
-    public EventDrivenMolecularDynamics(int N, double W, double H, double D,double initialVelocity,double particlesMass) {
-        this.N = N;
-        this.W = W;
-        this.H = H;
-        this.D = D;
-        this.particles = new EventParticle[N];
-        this.events = new PriorityQueue<>();
-        initializeParticles(initialVelocity,particlesMass);
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass) {
+        this.particleCount = particleCount;
+        this.boxWidth = boxWidth;
+        this.boxHeight = boxHeight;
+        this.slitWidth = slitWidth;
+        this.particles = new Particle[particleCount];
+        this.eventQueue = new PriorityQueue<>();
+        initializeParticles(initialVelocity, particlesMass);
         calculateInitialEvents();
     }
 
-    private void initializeParticles(double initialVelocity,double particlesMass) {
+    private void initializeParticles(double initialVelocity, double particlesMass) {
         //TODO: implement
     }
 
@@ -35,7 +33,7 @@ public class EventDrivenMolecularDynamics {
         //TODO: implement
     }
 
-    private void calculateNextEvent(EventParticle a, EventParticle b) {
+    private void calculateNextEvent(Particle a, Particle b) {
         //TODO: implement
     }
 
