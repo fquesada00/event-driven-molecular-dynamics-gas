@@ -1,40 +1,138 @@
 package ar.edu.itba.ss.edmd;
 
 import java.util.PriorityQueue;
+import java.util.Random;
+
+import static ar.edu.itba.ss.edmd.EventType.*;
 
 public class EventDrivenMolecularDynamics {
     private final PriorityQueue<Event> eventQueue;
     private final Particle[] particles;
-    private int particleCount;
-    private double boxWidth;
-    private double boxHeight;
-    private double slitWidth;
+    private final int particleCount;
+    private final double boxWidth;
+    private final double boxHeight;
+    private final double slitWidth;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
         this.particles = new Particle[particleCount];
         this.eventQueue = new PriorityQueue<>();
-        initializeParticles(initialVelocity, particlesMass);
+        initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
     }
 
-    private void initializeParticles(double initialVelocity, double particlesMass) {
-        //TODO: implement
+    private void initializeParticles(int particleCount, double initialVelocity, double particlesMass, double particleRadius) {
+        Random random = new Random();
+        for (int i = 0; i < particleCount; i++) {
+            double x = random.nextDouble() * boxWidth / 2;
+            double y = random.nextDouble() * boxHeight;
+            double velocityAngle = random.nextDouble() * 2 * Math.PI;
+            double velocityX = initialVelocity * Math.cos(velocityAngle);
+            double velocityY = initialVelocity * Math.sin(velocityAngle);
+            Particle particle = new Particle(x, y, velocityX, velocityY, particleRadius, particlesMass);
+            particles[i] = particle;
+        }
     }
 
     private void calculateInitialEvents() {
-        //TODO: implement
+        for (Particle p1 : particles) {
+            calculateNextParticleEvents(p1, 0);
+        }
     }
 
     public void run() {
-        //TODO: implement
+        double fp = 1;
+        double prevTime = 0;
+        int steps = 0;
+        while (fp >= 0.5) {
+            steps++;
+            Event nextEvent = eventQueue.poll();
+
+            if (nextEvent == null) throw new RuntimeException("No events in the queue");
+
+            if (!nextEvent.isValid()) continue;
+
+            double newTime = nextEvent.getTime();
+
+            updateParticlePositions(newTime - prevTime);
+
+            switch (nextEvent.getEventType()) {
+                case PARTICLES_COLLISION -> {
+                    Particle p1 = nextEvent.getParticle1();
+                    Particle p2 = nextEvent.getParticle2();
+                    p1.bounce(p2);
+                    calculateNextParticleEvents(p1, newTime);
+                    calculateNextParticleEvents(p2, newTime);
+                }
+                case PARTICLE_X_WALL_COLLISION -> {
+                    nextEvent.getParticle1().bounceX();
+                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
+                }
+                case PARTICLE_Y_WALL_COLLISION -> {
+                    nextEvent.getParticle1().bounceY();
+                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
+                }
+            }
+            prevTime = newTime;
+
+            fp = calculateParticleFraction();
+        }
+        System.out.println(steps);
     }
 
-    private void calculateNextEvent(Particle a, Particle b) {
-        //TODO: implement
+
+    private void updateParticlePositions(double deltaT) {
+        for (Particle p : particles) {
+            p.updatePosition(deltaT);
+        }
+    }
+
+    private double calculateParticleFraction() {
+        int count = 0;
+        for (Particle p : particles) {
+            if (p.x() < boxWidth / 2) {
+                count++;
+            }
+        }
+        return (double) count / particleCount;
+    }
+
+    private void calculateNextParticleEvents(Particle p, double offsetTime) {
+        calculateNextParticlesCollisionEvents(p, offsetTime);
+        calculateNextParticleWallCollisionEvents(p, offsetTime);
+    }
+
+    private void calculateNextParticleWallCollisionEvents(Particle particle, double offsetTime) {
+        double collidesXTime = particle.collidesX(this.boxHeight) + offsetTime;
+        double collidesYTime = particle.collidesY(this.boxWidth, this.boxHeight, this.slitWidth) + offsetTime;
+
+        if (collidesXTime < collidesYTime) {
+            eventQueue.add(new Event(collidesXTime, particle, null, PARTICLE_X_WALL_COLLISION));
+        } else {
+            eventQueue.add(new Event(collidesYTime, particle, null, PARTICLE_Y_WALL_COLLISION));
+        }
+
+    }
+
+    private void calculateNextParticlesCollisionEvents(Particle particle, double offsetTime) {
+        for (Particle p : particles) {
+            if (p == particle) continue;
+            Event particlesCollision = calculateNextParticlesCollisionEvent(particle, p, offsetTime);
+            if (particlesCollision != null) {
+                eventQueue.add(particlesCollision);
+            }
+        }
+    }
+
+    private Event calculateNextParticlesCollisionEvent(Particle a, Particle b, double offsetTime) {
+        double collisionTime = a.collides(b) + offsetTime;
+        if (collisionTime >= 0) {
+            return new Event(collisionTime, a, b, PARTICLES_COLLISION);
+        }
+        return null;
     }
 
 

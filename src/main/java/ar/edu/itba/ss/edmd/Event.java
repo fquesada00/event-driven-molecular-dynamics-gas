@@ -7,11 +7,13 @@ public class Event implements Comparable<Event> {
     private final int particle1CollisionCount;
     private final int particle2CollisionCount;
 
-    public Event(double time, Particle particle1, Particle particle2) {
+    private final EventType eventType;
+
+    public Event(double time, Particle particle1, Particle particle2, EventType eventType) {
         this.time = time;
         this.particle1 = particle1;
         this.particle2 = particle2;
-
+        this.eventType = eventType;
         this.particle1CollisionCount = particle1 == null ? 0 : particle1.getCollisionCount();
         this.particle2CollisionCount = particle2 == null ? 0 : particle2.getCollisionCount();
     }
@@ -26,6 +28,10 @@ public class Event implements Comparable<Event> {
 
     public Particle getParticle2() {
         return this.particle2;
+    }
+
+    public EventType getEventType() {
+        return eventType;
     }
 
     public boolean isValid() {
