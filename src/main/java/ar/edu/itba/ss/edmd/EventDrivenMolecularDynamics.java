@@ -69,7 +69,7 @@ public class EventDrivenMolecularDynamics {
 
         simulationPrinter.printInitialParameters();
 
-        while (fp >= 0.5) {
+        while (fp >= 0.4) {
             simulationPrinter.printStep(particles, prevTime, true);
 
             steps++;
