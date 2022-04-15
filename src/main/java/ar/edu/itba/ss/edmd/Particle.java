@@ -130,12 +130,28 @@ public class Particle {
         return position.y();
     }
 
-    public void updatePosition(double deltaTime) {
-        this.position = this.position.add(this.velocity.scale(deltaTime));
+    public double vx() {
+        return velocity.x();
     }
 
-    public int getCollisionCount() {
+    public double vy() {
+        return velocity.y();
+    }
+
+    public double radius() {
+        return radius;
+    }
+
+    public double mass() {
+        return mass;
+    }
+
+    public int collisionCount() {
         return collisionCount;
+    }
+
+    public void updatePosition(double deltaTime) {
+        this.position = this.position.add(this.velocity.scale(deltaTime));
     }
 
     public boolean overlaps(Particle other) {

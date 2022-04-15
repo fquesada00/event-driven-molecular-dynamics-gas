@@ -14,8 +14,8 @@ public class Event implements Comparable<Event> {
         this.particle1 = particle1;
         this.particle2 = particle2;
         this.eventType = eventType;
-        this.particle1CollisionCount = particle1 == null ? 0 : particle1.getCollisionCount();
-        this.particle2CollisionCount = particle2 == null ? 0 : particle2.getCollisionCount();
+        this.particle1CollisionCount = particle1 == null ? 0 : particle1.collisionCount();
+        this.particle2CollisionCount = particle2 == null ? 0 : particle2.collisionCount();
     }
 
     public double getTime() {
@@ -35,7 +35,7 @@ public class Event implements Comparable<Event> {
     }
 
     public boolean isValid() {
-        return (particle1 == null || particle1.getCollisionCount() == particle1CollisionCount) && (particle2 == null || particle2.getCollisionCount() == particle2CollisionCount);
+        return (particle1 == null || particle1.collisionCount() == particle1CollisionCount) && (particle2 == null || particle2.collisionCount() == particle2CollisionCount);
     }
 
     @Override

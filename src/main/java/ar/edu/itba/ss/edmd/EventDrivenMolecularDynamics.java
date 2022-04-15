@@ -1,5 +1,6 @@
 package ar.edu.itba.ss.edmd;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -14,14 +15,16 @@ public class EventDrivenMolecularDynamics {
     private final double boxWidth;
     private final double boxHeight;
     private final double slitWidth;
+    private final SimulationPrinter simulationPrinter;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, String outputFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
         this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
+        this.simulationPrinter = new SimulationPrinter(outputFileName, particleCount, boxWidth, boxHeight, slitWidth);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
     }
@@ -59,11 +62,16 @@ public class EventDrivenMolecularDynamics {
         }
     }
 
-    public void run() {
+    public void run() throws IOException {
         double fp = 1;
         double prevTime = 0;
         int steps = 0;
+
+        simulationPrinter.printInitialParameters();
+
         while (fp >= 0.5) {
+            simulationPrinter.printStep(particles, prevTime, true);
+
             steps++;
             Event nextEvent = eventQueue.poll();
 
@@ -74,6 +82,7 @@ public class EventDrivenMolecularDynamics {
             double newTime = nextEvent.getTime();
 
             updateParticlePositions(newTime - prevTime);
+
 
             switch (nextEvent.getEventType()) {
                 case PARTICLES_COLLISION -> {
