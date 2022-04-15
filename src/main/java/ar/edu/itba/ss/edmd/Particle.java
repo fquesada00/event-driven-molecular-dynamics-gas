@@ -68,6 +68,8 @@ public class Particle {
 
                     if ((nextY + radius) >= (boxHeight + slitWidth) / 2 || (nextY - radius) <= (boxHeight - slitWidth) / 2) {
                         return deltaTime;
+                    }else{
+                        return (boxWidth - radius - position.x()) / velocity.x();
                     }
                 }
             } else if (velocity.x() < 0) {
@@ -86,6 +88,8 @@ public class Particle {
                     double nextY = position.y() + velocity.y() * deltaTime;
                     if ((nextY + radius) >= (boxHeight + slitWidth) / 2 || (nextY - radius) <= (boxHeight - slitWidth) / 2) {
                         return deltaTime;
+                    }else{
+                        return (radius - position.x()) / velocity.x();
                     }
                 }
             }
