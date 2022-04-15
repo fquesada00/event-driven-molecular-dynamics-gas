@@ -69,7 +69,7 @@ public class EventDrivenMolecularDynamics {
 
         simulationPrinter.printInitialParameters();
 
-        while (fp >= 0.4) {
+        while (fp >= 0.5) {
             simulationPrinter.printStep(particles, prevTime, true);
 
             steps++;
@@ -136,7 +136,7 @@ public class EventDrivenMolecularDynamics {
 
         if (collidesXTime < collidesYTime) {
             eventQueue.add(new Event(collidesXTime, particle, null, PARTICLE_X_WALL_COLLISION));
-        } else {
+        } else if(collidesYTime != Double.POSITIVE_INFINITY) {
             eventQueue.add(new Event(collidesYTime, particle, null, PARTICLE_Y_WALL_COLLISION));
         }
 
@@ -154,7 +154,7 @@ public class EventDrivenMolecularDynamics {
 
     private Event calculateNextParticlesCollisionEvent(Particle a, Particle b, double offsetTime) {
         double collisionTime = a.collides(b) + offsetTime;
-        if (collisionTime >= 0) {
+        if (collisionTime != Double.POSITIVE_INFINITY && collisionTime >= 0) {
             return new Event(collisionTime, a, b, PARTICLES_COLLISION);
         }
         return null;

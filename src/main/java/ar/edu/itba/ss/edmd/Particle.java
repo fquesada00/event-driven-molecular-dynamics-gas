@@ -29,12 +29,12 @@ public class Particle {
         Vector2D deltaPos = other.position.subtract(this.position);
         Vector2D deltaVel = other.velocity.subtract(this.velocity);
 
-        if (Double.compare(deltaVel.dot(deltaPos), 0) >= 0) return Double.NEGATIVE_INFINITY;
+        if (Double.compare(deltaVel.dot(deltaPos), 0) >= 0) return Double.POSITIVE_INFINITY;
 
         double d =
                 Math.pow((deltaVel.dot(deltaPos)), 2) - (deltaVel.dot(deltaVel) * (deltaPos.dot(deltaPos) - Math.pow(this.radius + other.radius, 2)));
 
-        if (d < 0) return Double.NEGATIVE_INFINITY;
+        if (d < 0) return Double.POSITIVE_INFINITY;
 
         return -(deltaVel.dot(deltaPos) + Math.sqrt(d)) / (deltaVel.dot(deltaVel));
     }
@@ -50,12 +50,12 @@ public class Particle {
         }
 
         // vy = 0
-        return Double.NEGATIVE_INFINITY;
+        return Double.POSITIVE_INFINITY;
     }
 
     // Get collision time with a vertical wall
     public double collidesY(double boxWidth, double boxHeight, double slitWidth) {
-        double deltaTime = Double.NEGATIVE_INFINITY;
+        double deltaTime;
 
         // If the particle is in the first half, then it will bounce if it is going to the right and its y position is not in the slit,
         // or if it is going to the left
@@ -93,7 +93,7 @@ public class Particle {
 
         //Check if the particle is in the slit at the collision time
 
-        return deltaTime;
+        return Double.POSITIVE_INFINITY;
     }
 
     // Update particle velocity on collision
