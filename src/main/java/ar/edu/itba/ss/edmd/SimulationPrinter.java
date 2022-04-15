@@ -33,7 +33,9 @@ public class SimulationPrinter {
         printWriter.printf("%f\n", timeStep);
 
         for (Particle particle : particles) {
-            printWriter.printf("%f\t%f\t%f\t%f\t%f\t%f\n", particle.x(), particle.y(), particle.vx(), particle.vy(), particle.mass(), particle.radius());
+            int red = particle.x() > boxWidth / 2 ? 255 : 0;
+            int blue = particle.x() < boxWidth / 2 ? 255 : 0;
+            printWriter.printf("%f\t%f\t%f\t%f\t%f\t%f\t%d\t0\t%d\n", particle.x(), particle.y(), particle.vx(), particle.vy(), particle.mass(), particle.radius(), red, blue);
         }
 
         printWriter.close();
