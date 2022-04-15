@@ -137,4 +137,8 @@ public class Particle {
     public int getCollisionCount() {
         return collisionCount;
     }
+
+    public boolean overlaps(Particle other) {
+        return this.position.distance(other.position) < this.radius + other.radius;
+    }
 }

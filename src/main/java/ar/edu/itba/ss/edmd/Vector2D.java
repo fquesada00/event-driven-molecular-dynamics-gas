@@ -17,4 +17,12 @@ public record Vector2D(double x, double y) {
     public Vector2D scale(double factor) {
         return new Vector2D(this.x * factor, this.y * factor);
     }
+
+    public double length() {
+        return Math.sqrt(this.dot(this));
+    }
+
+    public double distance(Vector2D other) {
+        return this.subtract(other).length();
+    }
 }

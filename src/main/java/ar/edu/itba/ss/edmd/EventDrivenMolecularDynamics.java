@@ -1,5 +1,7 @@
 package ar.edu.itba.ss.edmd;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
@@ -7,7 +9,7 @@ import static ar.edu.itba.ss.edmd.EventType.*;
 
 public class EventDrivenMolecularDynamics {
     private final PriorityQueue<Event> eventQueue;
-    private final Particle[] particles;
+    private final List<Particle> particles;
     private final int particleCount;
     private final double boxWidth;
     private final double boxHeight;
@@ -18,7 +20,7 @@ public class EventDrivenMolecularDynamics {
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
-        this.particles = new Particle[particleCount];
+        this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
@@ -27,13 +29,27 @@ public class EventDrivenMolecularDynamics {
     private void initializeParticles(int particleCount, double initialVelocity, double particlesMass, double particleRadius) {
         Random random = new Random();
         for (int i = 0; i < particleCount; i++) {
-            double x = random.nextDouble() * boxWidth / 2;
-            double y = random.nextDouble() * boxHeight;
+            double x = random.nextDouble(particleRadius, boxWidth / 2 - particleRadius);
+            double y = random.nextDouble(particleRadius, boxHeight - particleRadius);
+
             double velocityAngle = random.nextDouble() * 2 * Math.PI;
             double velocityX = initialVelocity * Math.cos(velocityAngle);
             double velocityY = initialVelocity * Math.sin(velocityAngle);
-            Particle particle = new Particle(x, y, velocityX, velocityY, particleRadius, particlesMass);
-            particles[i] = particle;
+            Particle newParticle = new Particle(x, y, velocityX, velocityY, particleRadius, particlesMass);
+
+            // Check if particle overlaps with any other
+            boolean overlap = false;
+            for (Particle p : particles) {
+                if (newParticle.overlaps(p)) {
+                    i--;
+                    overlap = true;
+                    break;
+                }
+            }
+
+            if (!overlap) {
+                particles.add(newParticle);
+            }
         }
     }
 
