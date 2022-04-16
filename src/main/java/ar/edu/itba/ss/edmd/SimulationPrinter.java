@@ -37,10 +37,10 @@ public class SimulationPrinter {
         printWriter.close();
     }
 
-    public void printStep(List<Particle> particles, double timeStep, boolean append) throws IOException {
+    public void printStep(List<Particle> particles, double timeStep,double wallMomentum, boolean append) throws IOException {
         PrintWriter printWriter = new PrintWriter(new FileWriter(outputFileName, append));
 
-        printWriter.printf("%f\n", timeStep);
+        printWriter.printf("%f\t%f\n", timeStep,wallMomentum);
 
         for (Particle particle : particles) {
             int red = particle.x() > boxWidth / 2 ? 255 : 0;

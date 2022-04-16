@@ -81,7 +81,7 @@ public class EventDrivenMolecularDynamics {
 
             if (!nextEvent.isValid()) continue;
             
-            simulationPrinter.printStep(particles, prevTime, true);
+            simulationPrinter.printStep(particles, prevTime,nextEvent.getWallMomentum(), true);
             eventCount++;
 
             double newTime = nextEvent.getTime();
