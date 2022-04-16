@@ -4,8 +4,11 @@ import java.io.IOException;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        String outputFileName = "output.txt";
-        EventDrivenMolecularDynamics edmd = new EventDrivenMolecularDynamics(100,0.24,0.09,0.02,0.01,1.0,0.001, outputFileName);
+        String outputFileName = System.getProperty("simulationOutFileName", "simulation.txt");
+        int numberOfParticles = Integer.parseInt(System.getProperty("numberOfParticles", "100"));
+        double slitWidth = Double.parseDouble(System.getProperty("slitWidth", "0.02"));
+        double leftParticlesFractionThreshold = Double.parseDouble(System.getProperty("leftParticlesFractionThreshold", "0.5"));
+        EventDrivenMolecularDynamics edmd = new EventDrivenMolecularDynamics(numberOfParticles, 0.24, 0.09, slitWidth, 0.01, 1.0, 0.001, leftParticlesFractionThreshold, outputFileName);
         edmd.run();
     }
 }

@@ -16,14 +16,16 @@ public class EventDrivenMolecularDynamics {
     private final double boxHeight;
     private final double slitWidth;
     private final SimulationPrinter simulationPrinter;
+    private final double leftParticlesFractionThreshold;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, String outputFileName) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String outputFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
         this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
+        this.leftParticlesFractionThreshold = leftParticlesFractionThreshold;
         this.simulationPrinter = new SimulationPrinter(outputFileName, particleCount, boxWidth, boxHeight, slitWidth);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
@@ -69,7 +71,7 @@ public class EventDrivenMolecularDynamics {
 
         simulationPrinter.printInitialParameters();
 
-        while (fp >= 0.5) {
+        while (fp >= leftParticlesFractionThreshold) {
             simulationPrinter.printStep(particles, prevTime, true);
 
             steps++;
@@ -136,7 +138,7 @@ public class EventDrivenMolecularDynamics {
 
         if (collidesXTime < collidesYTime) {
             eventQueue.add(new Event(collidesXTime, particle, null, PARTICLE_X_WALL_COLLISION));
-        } else if(collidesYTime != Double.POSITIVE_INFINITY) {
+        } else if (collidesYTime != Double.POSITIVE_INFINITY) {
             eventQueue.add(new Event(collidesYTime, particle, null, PARTICLE_Y_WALL_COLLISION));
         }
 
