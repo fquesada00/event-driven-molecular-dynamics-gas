@@ -10,8 +10,8 @@ def write_animation(out_filename, input_file):
         elif i > 2:
             line_data = line.split()
 
-            # timestep
-            if len(line_data) == 1:
+            # timestep and momentum
+            if len(line_data) == 2:
                 xyz_file.write(f'{N}\ncomment\n')
             else:
                 xyz_file.write(line)
