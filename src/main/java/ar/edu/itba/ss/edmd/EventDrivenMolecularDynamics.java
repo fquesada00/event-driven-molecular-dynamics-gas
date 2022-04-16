@@ -18,7 +18,7 @@ public class EventDrivenMolecularDynamics {
     private final SimulationPrinter simulationPrinter;
     private final double leftParticlesFractionThreshold;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String outputFileName) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String outputFileName, String summaryFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
@@ -26,7 +26,7 @@ public class EventDrivenMolecularDynamics {
         this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
         this.leftParticlesFractionThreshold = leftParticlesFractionThreshold;
-        this.simulationPrinter = new SimulationPrinter(outputFileName, particleCount, boxWidth, boxHeight, slitWidth);
+        this.simulationPrinter = new SimulationPrinter(outputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
     }
@@ -67,19 +67,22 @@ public class EventDrivenMolecularDynamics {
     public void run() throws IOException {
         double fp = 1;
         double prevTime = 0;
-        int steps = 0;
+        int eventCount = 0;
+
+        long startExecTime = System.currentTimeMillis();
 
         simulationPrinter.printInitialParameters();
 
         while (fp >= leftParticlesFractionThreshold) {
-            simulationPrinter.printStep(particles, prevTime, true);
 
-            steps++;
             Event nextEvent = eventQueue.poll();
 
             if (nextEvent == null) throw new RuntimeException("No events in the queue");
 
             if (!nextEvent.isValid()) continue;
+            
+            simulationPrinter.printStep(particles, prevTime, true);
+            eventCount++;
 
             double newTime = nextEvent.getTime();
 
@@ -107,7 +110,12 @@ public class EventDrivenMolecularDynamics {
 
             fp = calculateParticleFraction();
         }
-        System.out.println(steps);
+
+        long endExecTime = System.currentTimeMillis();
+        long simulationExecTime = endExecTime - startExecTime;
+
+        simulationPrinter.printSummary(simulationExecTime, prevTime, eventCount, fp);
+        System.out.println(eventCount);
     }
 
 

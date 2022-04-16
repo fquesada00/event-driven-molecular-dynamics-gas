@@ -125,7 +125,6 @@ public class Particle {
         this.collisionCount++;
         this.velocity = new Vector2D(-this.velocity.x(), this.velocity.y());
     }
-
     public double x() {
         return position.x();
     }

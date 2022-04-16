@@ -7,22 +7,32 @@ import java.util.List;
 
 public class SimulationPrinter {
     private final String outputFileName;
+    private final String summaryFileName;
     private final int particleCount;
     private final double boxWidth;
     private final double boxHeight;
     private final double slitWidth;
 
-    public SimulationPrinter(String outputFileName, int particleCount, double boxWidth, double boxHeight, double slitWidth) {
+    public SimulationPrinter(String outputFileName, String summaryFileName, int particleCount, double boxWidth, double boxHeight, double slitWidth) {
         this.outputFileName = outputFileName;
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
+        this.summaryFileName = summaryFileName;
     }
 
     public void printInitialParameters() throws IOException {
         PrintWriter printWriter = new PrintWriter(new FileWriter(outputFileName));
         printWriter.printf("%d\n%f\t%f\n%f\n", particleCount, boxWidth, boxHeight, slitWidth);
+
+        printWriter.close();
+    }
+
+    public void printSummary(double executionTime, double simulationTime, int eventCount, double leftParticlesFraction) throws IOException {
+        PrintWriter printWriter = new PrintWriter(new FileWriter(summaryFileName));
+
+        printWriter.printf("%d\n%f\t%f\n%f\n%f\n%f\n%d\n%f\n", particleCount, boxWidth, boxHeight, slitWidth, executionTime / 1000, simulationTime, eventCount, leftParticlesFraction);
 
         printWriter.close();
     }
