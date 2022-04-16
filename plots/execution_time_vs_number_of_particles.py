@@ -33,8 +33,8 @@ def execution_time_vs_number_of_particles(threshold, repetitions):
     plot.errorbar(particle_count, average_execution_time, ls="none",
                   yerr=average_execution_time_stdev, ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
 
-    plot.xlabel("Number of particles")
-    plot.ylabel("Execution time (s)")
+    plot.xlabel("Número de partículas")
+    plot.ylabel("Tiempo de ejecución (s)")
 
     plot.show()
     plot.close()
