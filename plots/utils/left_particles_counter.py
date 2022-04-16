@@ -5,9 +5,12 @@ def is_left_particle(x_coordinate, box_width):
 
 def left_particles_counter(simulation_file_name, log_every_n_time_steps=1):
     left_particle_count = []
+    # Store every time step in the simulation
     time_steps = []
+    # Store every time step in the simulation on a discrete interval
     discrete_time_steps = []
     current_number_of_time_step = 0
+
     with open(simulation_file_name) as simulation_file:
         for line_number, line in enumerate(simulation_file):
             if line_number == 0:
@@ -34,7 +37,7 @@ def left_particles_counter(simulation_file_name, log_every_n_time_steps=1):
                     x = float(line_data[0])
                     if is_left_particle(x, box_width):
                         left_particle_count[current_index - 1] += 1
-                
+                    
 
     left_particle_fraction = []
     right_particle_fraction = []
