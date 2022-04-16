@@ -26,7 +26,7 @@ def left_particles_counter(simulation_file_name, log_every_n_time_steps=1):
                        log_every_n_time_steps) == 0
                 current_index = int(
                     current_number_of_time_step / log_every_n_time_steps)
-                if len(line_data) == 1:
+                if len(line_data) == 2:
                     time_steps.append(float(line_data[0]))
                     current_number_of_time_step += 1
                     if log:
