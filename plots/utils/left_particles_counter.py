@@ -30,14 +30,13 @@ def left_particles_counter(simulation_file_name, log_every_n_time_steps=1):
                     time_steps.append(float(line_data[0]))
                     current_number_of_time_step += 1
                     if log:
-                        discrete_time_steps.append(current_index)
+                        discrete_time_steps.append(current_index + 1)
                         left_particle_count.append(0)
                 elif log:
                     # Count if left particle
                     x = float(line_data[0])
                     if is_left_particle(x, box_width):
                         left_particle_count[current_index - 1] += 1
-                    
 
     left_particle_fraction = []
     right_particle_fraction = []
@@ -49,5 +48,10 @@ def left_particles_counter(simulation_file_name, log_every_n_time_steps=1):
         left_particle_fraction.append(left_particle_count[i] / particle_count)
         right_particle_fraction.append(1 - left_particle_fraction[i])
 
+    # Load first fraction of the simulation
+    if not is_total_time_steps_divisible_by_log_frequency:
+        discrete_time_steps.insert(0, 0)
+        left_particle_fraction.insert(0, 1.0)
+        right_particle_fraction.insert(0, 0.0)
 
     return left_particle_fraction, right_particle_fraction, discrete_time_steps
