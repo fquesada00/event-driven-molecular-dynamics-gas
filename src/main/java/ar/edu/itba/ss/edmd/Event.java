@@ -15,11 +15,11 @@ public class Event implements Comparable<Event> {
         this.particle1 = particle1;
         this.particle2 = particle2;
         this.eventType = eventType;
-        if(eventType == EventType.PARTICLE_X_WALL_COLLISION) {
+        if (eventType == EventType.PARTICLE_X_WALL_COLLISION) {
             this.wallMomentum = Math.abs(2 * particle1.mass() * particle1.vy());
-        }else if(eventType == EventType.PARTICLE_Y_WALL_COLLISION) {
+        } else if (eventType == EventType.PARTICLE_Y_WALL_COLLISION) {
             this.wallMomentum = Math.abs(2 * particle1.mass() * particle1.vx());
-        }else{
+        } else {
             this.wallMomentum = 0;
         }
         this.particle1CollisionCount = particle1 == null ? 0 : particle1.collisionCount();
@@ -41,12 +41,15 @@ public class Event implements Comparable<Event> {
     public EventType getEventType() {
         return eventType;
     }
+
     public double getWallMomentum() {
         return wallMomentum;
     }
+
     public boolean isValid() {
         return (particle1 == null || particle1.collisionCount() == particle1CollisionCount) && (particle2 == null || particle2.collisionCount() == particle2CollisionCount);
     }
+
     @Override
     public int compareTo(Event o) {
         return Double.compare(this.time, o.time);
