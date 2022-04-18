@@ -32,7 +32,7 @@ public class SimulationPrinter {
 
     public void printStaticParameters() throws IOException {
         PrintWriter printWriter = new PrintWriter(new FileWriter(staticOutputFileName));
-        printWriter.printf("%d\n%f\t%f\n%f\n%f,%f", particleCount, boxWidth, boxHeight, slitWidth, particleMass, particleRadius);
+        printWriter.printf("%d\n%f\t%f\n%f\n%f\n%f", particleCount, boxWidth, boxHeight, slitWidth, particleMass, particleRadius);
 
         printWriter.close();
     }
