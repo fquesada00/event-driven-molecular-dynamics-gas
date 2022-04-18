@@ -16,17 +16,20 @@ public class EventDrivenMolecularDynamics {
     private final double boxHeight;
     private final double slitWidth;
     private final SimulationPrinter simulationPrinter;
-    private final double leftParticlesFractionThreshold;
+    private final double threshold;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String staticOutputFileName,String dynamicOutputFileName, String summaryFileName) {
+    private final int equilibriumIterations;
+
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double threshold, int equilibriumIterations, String staticOutputFileName, String dynamicOutputFileName, String summaryFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
         this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
-        this.leftParticlesFractionThreshold = leftParticlesFractionThreshold;
-        this.simulationPrinter = new SimulationPrinter(staticOutputFileName,dynamicOutputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth,particlesMass,particleRadius);
+        this.threshold = threshold;
+        this.equilibriumIterations = equilibriumIterations;
+        this.simulationPrinter = new SimulationPrinter(staticOutputFileName, dynamicOutputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth, particlesMass, particleRadius);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
     }
@@ -72,16 +75,22 @@ public class EventDrivenMolecularDynamics {
         long startExecTime = System.currentTimeMillis();
 
         simulationPrinter.printStaticParameters();
-
-        while (fp >= leftParticlesFractionThreshold) {
+        int consecutiveItertions = 0;
+        while (fp >= 0.5 + threshold || fp <= 0.5 - threshold || consecutiveItertions < equilibriumIterations) {
 
             Event nextEvent = eventQueue.poll();
 
             if (nextEvent == null) throw new RuntimeException("No events in the queue");
 
             if (!nextEvent.isValid()) continue;
-            
-            simulationPrinter.printStep(particles,nextEvent, prevTime, true);
+
+            if (fp < 0.5 + threshold && fp > 0.5 - threshold) {
+                consecutiveItertions++;
+            } else {
+                consecutiveItertions = 0;
+            }
+
+            simulationPrinter.printStep(particles, nextEvent, prevTime, true);
             eventCount++;
 
             double newTime = nextEvent.getTime();
