@@ -11,6 +11,7 @@ import static ar.edu.itba.ss.edmd.EventType.*;
 public class EventDrivenMolecularDynamics {
     private final PriorityQueue<Event> eventQueue;
     private final List<Particle> particles;
+    private final List<FixedObstacle> fixedObstacles;
     private final int particleCount;
     private final double boxWidth;
     private final double boxHeight;
@@ -26,6 +27,7 @@ public class EventDrivenMolecularDynamics {
         this.boxHeight = boxHeight;
         this.slitWidth = slitWidth;
         this.particles = new ArrayList<>();
+        this.fixedObstacles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
         this.threshold = threshold;
         this.equilibriumIterations = equilibriumIterations;
@@ -36,6 +38,7 @@ public class EventDrivenMolecularDynamics {
 
     private void initializeParticles(int particleCount, double initialVelocity, double particlesMass, double particleRadius) {
         Random random = new Random();
+
         for (int i = 0; i < particleCount; i++) {
             double x = random.nextDouble(particleRadius, boxWidth / 2 - particleRadius);
             double y = random.nextDouble(particleRadius, boxHeight - particleRadius);
@@ -61,6 +64,14 @@ public class EventDrivenMolecularDynamics {
         }
     }
 
+    private void initializeFixedObstacles() {
+        FixedObstacle topSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight + slitWidth) / 2, 0);
+        FixedObstacle bottomSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight - slitWidth) / 2, 0);
+
+        fixedObstacles.add(topSlitVertex);
+        fixedObstacles.add(bottomSlitVertex);
+    }
+
     private void calculateInitialEvents() {
         for (Particle p1 : particles) {
             calculateNextParticleEvents(p1, 0);
@@ -75,8 +86,8 @@ public class EventDrivenMolecularDynamics {
         long startExecTime = System.currentTimeMillis();
 
         simulationPrinter.printStaticParameters();
-        int consecutiveItertions = 0;
-        while (fp >= 0.5 + threshold || fp <= 0.5 - threshold || consecutiveItertions < equilibriumIterations) {
+        int consecutiveIterations = 0;
+        while (fp >= 0.5 + threshold || fp <= 0.5 - threshold || consecutiveIterations < equilibriumIterations) {
 
             Event nextEvent = eventQueue.poll();
 
@@ -85,9 +96,9 @@ public class EventDrivenMolecularDynamics {
             if (!nextEvent.isValid()) continue;
 
             if (fp < 0.5 + threshold && fp > 0.5 - threshold) {
-                consecutiveItertions++;
+                consecutiveIterations++;
             } else {
-                consecutiveItertions = 0;
+                consecutiveIterations = 0;
             }
 
             simulationPrinter.printStep(particles, nextEvent, prevTime, true);
@@ -112,6 +123,10 @@ public class EventDrivenMolecularDynamics {
                 }
                 case PARTICLE_Y_WALL_COLLISION -> {
                     nextEvent.getParticle1().bounceY();
+                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
+                }
+                case FIXED_OBSTACLE_COLLISION -> {
+                    nextEvent.getParticle1().bounceFixedObstacle(nextEvent.getFixedObstacle());
                     calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
                 }
             }
@@ -147,6 +162,17 @@ public class EventDrivenMolecularDynamics {
     private void calculateNextParticleEvents(Particle p, double offsetTime) {
         calculateNextParticlesCollisionEvents(p, offsetTime);
         calculateNextParticleWallCollisionEvents(p, offsetTime);
+        calculateNextFixedObstacleCollisionEvents(p, offsetTime);
+    }
+
+    private void calculateNextFixedObstacleCollisionEvents(Particle p, double offsetTime) {
+        for (FixedObstacle obstacle : fixedObstacles) {
+            double collisionTime = p.collides(obstacle) + offsetTime;
+
+            if (collisionTime != Double.POSITIVE_INFINITY && collisionTime >= 0) {
+                eventQueue.add(new Event(collisionTime, p, obstacle, PARTICLES_COLLISION));
+            }
+        }
     }
 
     private void calculateNextParticleWallCollisionEvents(Particle particle, double offsetTime) {
@@ -154,9 +180,9 @@ public class EventDrivenMolecularDynamics {
         double collidesYTime = particle.collidesY(this.boxWidth, this.boxHeight, this.slitWidth) + offsetTime;
 
         if (collidesXTime < collidesYTime) {
-            eventQueue.add(new Event(collidesXTime, particle, null, PARTICLE_X_WALL_COLLISION));
+            eventQueue.add(new Event(collidesXTime, particle, (Particle) null, PARTICLE_X_WALL_COLLISION));
         } else if (collidesYTime != Double.POSITIVE_INFINITY) {
-            eventQueue.add(new Event(collidesYTime, particle, null, PARTICLE_Y_WALL_COLLISION));
+            eventQueue.add(new Event(collidesYTime, particle, (Particle) null, PARTICLE_Y_WALL_COLLISION));
         }
 
     }

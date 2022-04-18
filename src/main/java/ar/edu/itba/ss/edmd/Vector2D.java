@@ -25,4 +25,15 @@ public record Vector2D(double x, double y) {
     public double distance(Vector2D other) {
         return this.subtract(other).length();
     }
+
+    public double angle(Vector2D other) {
+        return Math.acos(this.dot(other) / (this.length() * other.length()));
+    }
+
+    public Vector2D applyTransform(Matrix2x2 transform) {
+        return new Vector2D(
+                transform.get(0, 0) * x + transform.get(0, 1) * y,
+                transform.get(1, 0) * x + transform.get(1, 1) * y
+        );
+    }
 }

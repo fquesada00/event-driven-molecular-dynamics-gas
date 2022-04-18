@@ -7,6 +7,7 @@ public class Event implements Comparable<Event> {
     private final int particle1CollisionCount;
     private final int particle2CollisionCount;
     private final EventType eventType;
+    private FixedObstacle fixedObstacle;
 
     public Event(double time, Particle particle1, Particle particle2, EventType eventType) {
         this.time = time;
@@ -15,6 +16,12 @@ public class Event implements Comparable<Event> {
         this.eventType = eventType;
         this.particle1CollisionCount = particle1 == null ? 0 : particle1.collisionCount();
         this.particle2CollisionCount = particle2 == null ? 0 : particle2.collisionCount();
+    }
+
+    public Event(double time, Particle particle, FixedObstacle obstacle, EventType eventType) {
+        this(time, particle, (Particle) null, eventType);
+        this.fixedObstacle = obstacle;
+
     }
 
     public double getTime() {
@@ -27,6 +34,10 @@ public class Event implements Comparable<Event> {
 
     public Particle getParticle2() {
         return this.particle2;
+    }
+
+    public FixedObstacle getFixedObstacle() {
+        return this.fixedObstacle;
     }
 
     public EventType getEventType() {

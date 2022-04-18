@@ -39,6 +39,10 @@ public class Particle {
         return -(deltaVel.dot(deltaPos) + Math.sqrt(d)) / (deltaVel.dot(deltaVel));
     }
 
+    public double collides(FixedObstacle obstacle) {
+        return collides(new Particle(obstacle.x(), obstacle.y(), 0, 0, obstacle.radius(), 0));
+    }
+
     // Get collision time with a horizontal wall
     public double collidesX(double boxHeight) {
         if (velocity.y() > 0) {
@@ -57,8 +61,6 @@ public class Particle {
     public double collidesY(double boxWidth, double boxHeight, double slitWidth) {
         double deltaTime;
 
-        // If the particle is in the first half, then it will bounce if it is going to the right and its y position is not in the slit,
-        // or if it is going to the left
         if (position.x() < boxWidth / 2) {
             if (velocity.x() > 0) {
                 deltaTime = (boxWidth / 2 - radius - position.x()) / velocity.x();
@@ -66,9 +68,10 @@ public class Particle {
                 if (deltaTime >= 0) {
                     double nextY = position.y() + velocity.y() * deltaTime;
 
-                    if ((nextY + radius) >= (boxHeight + slitWidth) / 2 || (nextY - radius) <= (boxHeight - slitWidth) / 2) {
+                    // check if the particle is in the slit and going
+                    if (nextY >= (boxHeight + slitWidth) / 2 || nextY <= (boxHeight - slitWidth) / 2) {
                         return deltaTime;
-                    }else{
+                    } else {
                         return (boxWidth - radius - position.x()) / velocity.x();
                     }
                 }
@@ -86,9 +89,9 @@ public class Particle {
 
                 if (deltaTime >= 0) {
                     double nextY = position.y() + velocity.y() * deltaTime;
-                    if ((nextY + radius) >= (boxHeight + slitWidth) / 2 || (nextY - radius) <= (boxHeight - slitWidth) / 2) {
+                    if (nextY >= (boxHeight + slitWidth) / 2 || nextY <= (boxHeight - slitWidth) / 2) {
                         return deltaTime;
-                    }else{
+                    } else {
                         return (radius - position.x()) / velocity.x();
                     }
                 }
@@ -125,6 +128,28 @@ public class Particle {
         this.collisionCount++;
         this.velocity = new Vector2D(-this.velocity.x(), this.velocity.y());
     }
+
+    public void bounceFixedObstacle(FixedObstacle obstacle) {
+        this.collisionCount++;
+
+        Vector2D normal = this.position.subtract(obstacle.position());
+
+        double angle = normal.angle(new Vector2D(1, 0));
+
+        double cn = 1;
+        double ct = 1;
+
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+
+        Matrix2x2 transform = new Matrix2x2(-cn * Math.pow(cos, 2) + ct * Math.pow(sin, 2),
+                -(cn + ct) * sin * cos,
+                -(cn + ct) * sin * cos,
+                -cn * Math.pow(sin, 2) + ct * Math.pow(cos, 2));
+
+        this.velocity = this.velocity.applyTransform(transform);
+    }
+
     public double x() {
         return position.x();
     }
