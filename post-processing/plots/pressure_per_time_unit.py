@@ -29,9 +29,9 @@ def pressure_per_time_unit_plot(threshold, time_unit, particles):
             elif line_number == 1:
                 box_width, box_height = [
                     float(dimension) for dimension in line.split()]
+                wall_length = box_height * 2 + box_width * 2
             elif line_number == 2:
                 slit_width = float(line.split()[0])
-                wall_length = (box_height * 3 - slit_width) + box_width * 2
             elif len(line.split()) == 2:
                 line_data = line.split()
 

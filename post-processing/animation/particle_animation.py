@@ -1,5 +1,7 @@
 import argparse
 
+from helpers import parse_static_file
+
 
 def write_animation(out_filename, input_file):
     xyz_file = open(out_filename, "w")
@@ -22,14 +24,12 @@ def write_animation(out_filename, input_file):
 def write_walls(out_filename, input_file):
     walls_xyz_file = open(out_filename, "w")
     input_file.seek(0)
-    for i, line in enumerate(input_file):
-        if i == 1:
-            box_width, box_height = [
-                float(dimension) for dimension in line.split()]
-        elif i == 2:
-            slit_width = float(line.split()[0])
-        elif i > 2:
-            break
+
+    simulation = parse_static_file(input_file)
+
+    box_width = simulation.box_width
+    box_height = simulation.box_height
+    slit_width = simulation.slit_width
 
     number_of_particles = (box_height / 0.01) * 3 + \
         (box_width / 0.01) * 2 - slit_width / 0.01
@@ -53,14 +53,16 @@ def write_walls(out_filename, input_file):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=argparse.FileType('r'),
-                        default=None, help="File of simulation timesteps", dest="simulation_steps", required=True)
+    parser.add_argument("--static-input", type=argparse.FileType('r'),
+                        default=None, help="File of simulation static data.", dest="simulation_static_data", required=True)
+    parser.add_argument("--dynamic-input", type=argparse.FileType('r'),
+                        default=None, help="File of simulation timesteps.", dest="simulation_steps", required=True)
     parser.add_argument("--output", type=str,
-                        default="particles.xyz", help="Desired file name for XYZ output", dest="out_file_name", required=False)
+                        default="particles.xyz", help="Desired file name for XYZ output.", dest="out_file_name", required=False)
     parser.add_argument("--output-walls", type=str,
-                        default="walls.xyz", help="Desired file name for walls XYZ output", dest="walls_out_file_name", required=False)
+                        default="walls.xyz", help="Desired file name for walls XYZ output.", dest="walls_out_file_name", required=False)
 
     args = parser.parse_args()
-    write_walls(args.walls_out_file_name, args.simulation_steps)
+    write_walls(args.walls_out_file_name, args.simulation_static_data)
     write_animation(args.out_file_name, args.simulation_steps)
     args.simulation_steps.close()
