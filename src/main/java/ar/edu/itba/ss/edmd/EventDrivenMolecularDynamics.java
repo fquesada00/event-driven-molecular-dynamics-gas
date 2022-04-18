@@ -18,7 +18,7 @@ public class EventDrivenMolecularDynamics {
     private final SimulationPrinter simulationPrinter;
     private final double leftParticlesFractionThreshold;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String outputFileName, String summaryFileName) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double leftParticlesFractionThreshold, String staticOutputFileName,String dynamicOutputFileName, String summaryFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
@@ -26,7 +26,7 @@ public class EventDrivenMolecularDynamics {
         this.particles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
         this.leftParticlesFractionThreshold = leftParticlesFractionThreshold;
-        this.simulationPrinter = new SimulationPrinter(outputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth);
+        this.simulationPrinter = new SimulationPrinter(staticOutputFileName,dynamicOutputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth,particlesMass,particleRadius);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         calculateInitialEvents();
     }
@@ -71,7 +71,7 @@ public class EventDrivenMolecularDynamics {
 
         long startExecTime = System.currentTimeMillis();
 
-        simulationPrinter.printInitialParameters();
+        simulationPrinter.printStaticParameters();
 
         while (fp >= leftParticlesFractionThreshold) {
 
@@ -81,7 +81,7 @@ public class EventDrivenMolecularDynamics {
 
             if (!nextEvent.isValid()) continue;
             
-            simulationPrinter.printStep(particles, prevTime,nextEvent.getWallMomentum(), true);
+            simulationPrinter.printStep(particles,nextEvent, prevTime, true);
             eventCount++;
 
             double newTime = nextEvent.getTime();
