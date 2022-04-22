@@ -4,7 +4,7 @@ from statistics import mean, stdev
 import matplotlib.pyplot as plt
 
 from ..helpers import get_equilibrium_iterations, parse_static_file
-from ..models import CollisionType
+from ..models.CollisionType import ColissionType
 
 
 def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
@@ -14,7 +14,7 @@ def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
     simulation_dynamic_output_file_name = "dynamic.txt"
     simulation_static_output_file_name = "static.txt"
 
-    cmd = f"java -DnumberOfParticles={particles} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -Dthreshold={threshold} -DequilibriumTime={equilibrium_time} -Dvelocity={velocity} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
+    cmd = f"java -DnumberOfParticles={particles} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -Dthreshold={threshold} -DequilibriumTime={equilibrium_time} -Dvelocity={velocity} -jar ./target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
@@ -39,9 +39,9 @@ def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
                 continue
 
             # Next event (detected collision)
-            if event_type == CollisionType.PARTICLE_X_WALL_COLLISION:
+            if event_type == ColissionType.PARTICLE_X_WALL_COLLISION:
                 total_impulse += abs(2 * simulation.particle_mass * vy)
-            elif event_type == CollisionType.PARTICLE_Y_WALL_COLLISION:
+            elif event_type == ColissionType.PARTICLE_Y_WALL_COLLISION:
                 total_impulse += abs(2 * simulation.particle_mass * vx)
 
             equilibrium_end_time = float(iteration_data[0])
@@ -55,9 +55,9 @@ def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
             wall_direction = iteration_data[4]
 
             if wall_direction == "x":
-                event_type = CollisionType.PARTICLE_X_WALL_COLLISION
+                event_type = ColissionType.PARTICLE_X_WALL_COLLISION
             else:
-                event_type = CollisionType.PARTICLE_Y_WALL_COLLISION
+                event_type = ColissionType.PARTICLE_Y_WALL_COLLISION
 
     return (total_impulse / (equilibrium_end_time -
                              equilibrium_start_time)) / simulation_perimeter
@@ -75,7 +75,7 @@ def get_pressure_with_error_at_velocity(particles, threshold, equilibrium_time, 
 
 
 def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions):
-    velocities = [0.005, 0.01, 0.02, 0.05, 0.1, 0.5]
+    velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
     particle_mass = 1
     temperatures = []
     average_pressures = []

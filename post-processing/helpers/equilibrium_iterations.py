@@ -2,6 +2,8 @@ from file_read_backwards import FileReadBackwards
 from collections import deque
 
 # @link = https://pypi.org/project/file-read-backwards/
+
+
 def get_equilibrium_iterations(file_path, equilibrium_time):
     equilibrium_iterations_data = deque([])
     last_event_time = -1
@@ -21,7 +23,7 @@ def get_equilibrium_iterations(file_path, equilibrium_time):
                     break
 
                 # Add iteration data to equilibrium iterations data
-                equilibrium_iterations_data.appendleft(list(iteration_data))
+                equilibrium_iterations_data.extendleft(list(iteration_data))
 
                 # Add time to equilibrium iterations data
                 equilibrium_iterations_data.appendleft(f"{iteration_time}")
@@ -30,8 +32,7 @@ def get_equilibrium_iterations(file_path, equilibrium_time):
                 iteration_data = deque([])
             else:
                 # Format: x y vx vy <'x' | 'y' | 'p' | '-'>
-                iteration_data.appendleft(line_data)
-    
+                iteration_data.appendleft(line)
+
     # Return the equilibrium iterations data
     return list(equilibrium_iterations_data)
-                    
