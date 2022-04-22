@@ -1,5 +1,7 @@
 package ar.edu.itba.ss.edmd;
 
+import ar.edu.itba.ss.edmd.events.Event;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,16 +51,8 @@ public class SimulationPrinter {
         PrintWriter printWriter = new PrintWriter(new FileWriter(dynamicOutputFileName, append));
 
         printWriter.printf("%f\n", timeStep);
-        char value = '-';
-        Particle eventParticle = event.getParticle1();
-        Particle eventParticle2 = event.getParticle2();
-        switch (event.getEventType()) {
-            case PARTICLE_X_WALL_COLLISION -> value = 'x';
-            case PARTICLE_Y_WALL_COLLISION -> value = 'y';
-            case PARTICLES_COLLISION -> value = 'p';
-        }
         for (Particle particle : particles) {
-            printWriter.printf("%f\t%f\t%f\t%f\t%c\n", particle.x(), particle.y(), particle.vx(), particle.vy(), particle.equals(eventParticle) || particle.equals(eventParticle2) ? value : '-');
+            printWriter.printf("%f\t%f\t%f\t%f\t%c\n", particle.x(), particle.y(), particle.vx(), particle.vy(), event.getEventType(particle));
         }
 
         printWriter.close();

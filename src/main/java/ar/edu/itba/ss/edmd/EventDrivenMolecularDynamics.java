@@ -1,12 +1,12 @@
 package ar.edu.itba.ss.edmd;
 
+import ar.edu.itba.ss.edmd.events.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
-
-import static ar.edu.itba.ss.edmd.EventType.*;
 
 public class EventDrivenMolecularDynamics {
     private final PriorityQueue<Event> eventQueue;
@@ -75,7 +75,7 @@ public class EventDrivenMolecularDynamics {
 
     private void calculateInitialEvents() {
         for (Particle p1 : particles) {
-            calculateNextParticleEvents(p1, 0);
+            eventQueue.addAll(new InitializeParticleEvent(0, p1).execute(particles, fixedObstacles, boxWidth, boxHeight, slitWidth));
         }
     }
 
@@ -107,32 +107,10 @@ public class EventDrivenMolecularDynamics {
 
             double newTime = nextEvent.getTime();
 
-//            if (newTime == prevTime) throw new RuntimeException("Time is not increasing");
-
             updateParticlePositions(newTime - prevTime);
 
+            eventQueue.addAll(nextEvent.execute(particles, fixedObstacles, boxWidth, boxHeight, slitWidth));
 
-            switch (nextEvent.getEventType()) {
-                case PARTICLES_COLLISION -> {
-                    Particle p1 = nextEvent.getParticle1();
-                    Particle p2 = nextEvent.getParticle2();
-                    p1.bounce(p2);
-                    calculateNextParticleEvents(p1, newTime);
-                    calculateNextParticleEvents(p2, newTime);
-                }
-                case PARTICLE_X_WALL_COLLISION -> {
-                    nextEvent.getParticle1().bounceX();
-                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
-                }
-                case PARTICLE_Y_WALL_COLLISION -> {
-                    nextEvent.getParticle1().bounceY();
-                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
-                }
-                case FIXED_OBSTACLE_COLLISION -> {
-                    nextEvent.getParticle1().bounceFixedObstacle(nextEvent.getFixedObstacle());
-                    calculateNextParticleEvents(nextEvent.getParticle1(), newTime);
-                }
-            }
             prevTime = newTime;
 
             fp = calculateParticleFraction();
@@ -160,52 +138,6 @@ public class EventDrivenMolecularDynamics {
             }
         }
         return (double) count / particleCount;
-    }
-
-    private void calculateNextParticleEvents(Particle p, double offsetTime) {
-        calculateNextParticlesCollisionEvents(p, offsetTime);
-        calculateNextParticleWallCollisionEvents(p, offsetTime);
-        calculateNextFixedObstacleCollisionEvents(p, offsetTime);
-    }
-
-    private void calculateNextFixedObstacleCollisionEvents(Particle p, double offsetTime) {
-        for (FixedObstacle obstacle : fixedObstacles) {
-            double collisionTime = p.collides(obstacle) + offsetTime;
-
-            if (collisionTime != Double.POSITIVE_INFINITY && collisionTime >= 0) {
-                eventQueue.add(new Event(collisionTime, p, obstacle, FIXED_OBSTACLE_COLLISION));
-            }
-        }
-    }
-
-    private void calculateNextParticleWallCollisionEvents(Particle particle, double offsetTime) {
-        double collidesXTime = particle.collidesX(this.boxHeight) + offsetTime;
-        double collidesYTime = particle.collidesY(this.boxWidth, this.boxHeight, this.slitWidth) + offsetTime;
-
-        if (collidesXTime < collidesYTime) {
-            eventQueue.add(new Event(collidesXTime, particle, (Particle) null, PARTICLE_X_WALL_COLLISION));
-        } else if (collidesYTime != Double.POSITIVE_INFINITY) {
-            eventQueue.add(new Event(collidesYTime, particle, (Particle) null, PARTICLE_Y_WALL_COLLISION));
-        }
-
-    }
-
-    private void calculateNextParticlesCollisionEvents(Particle particle, double offsetTime) {
-        for (Particle p : particles) {
-            if (p == particle) continue;
-            Event particlesCollision = calculateNextParticlesCollisionEvent(particle, p, offsetTime);
-            if (particlesCollision != null) {
-                eventQueue.add(particlesCollision);
-            }
-        }
-    }
-
-    private Event calculateNextParticlesCollisionEvent(Particle a, Particle b, double offsetTime) {
-        double collisionTime = a.collides(b) + offsetTime;
-        if (collisionTime != Double.POSITIVE_INFINITY && collisionTime >= 0) {
-            return new Event(collisionTime, a, b, PARTICLES_COLLISION);
-        }
-        return null;
     }
 
 
