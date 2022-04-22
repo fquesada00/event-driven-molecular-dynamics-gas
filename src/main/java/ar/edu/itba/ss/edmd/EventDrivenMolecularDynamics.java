@@ -88,7 +88,8 @@ public class EventDrivenMolecularDynamics {
 
         simulationPrinter.printStaticParameters();
         Timer timer = null;
-        int eventInThresholdCount = 0;
+
+
         while (true) {
 
             Event nextEvent = eventQueue.poll();
@@ -100,7 +101,6 @@ public class EventDrivenMolecularDynamics {
             if (nextEvent.finished()){
                 if (debug) {
                     System.out.println("Simulation finished after " + eventCount + " events and " + prevTime + " simulation seconds with fp = " + fp);
-                    System.out.println("Events in threshold: " + eventInThresholdCount);
                     System.out.println("Remaining events: " + eventQueue.size());
                 }
                 break;
@@ -117,16 +117,7 @@ public class EventDrivenMolecularDynamics {
                     System.out.println("Timer set at " + newTime + " with fp = " + fp);
                 }
                 timer = new Timer();
-                eventInThresholdCount = 0;
                 eventQueue.add(new TimerEvent(newTime + this.equilibriumTime,timer));
-            } else if((fp >= 0.5 + threshold|| fp <= 0.5 - threshold) && timer != null) {
-                if (debug) {
-                    System.out.println("Timer reset at " + newTime + " with fp = " + fp);
-                }
-                timer.invalidate();
-                timer = null;
-            }else if(timer != null) {
-                eventInThresholdCount++;
             }
 
 
