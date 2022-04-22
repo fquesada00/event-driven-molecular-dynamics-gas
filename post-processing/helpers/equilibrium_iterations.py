@@ -2,7 +2,18 @@ from file_read_backwards import FileReadBackwards
 from collections import deque
 
 # @link = https://pypi.org/project/file-read-backwards/
+def get_equilibrium_time(file_path):
+    equilibrium_time = -1
+    with FileReadBackwards(file_path, encoding="utf-8") as simulation_file:
+        # Initialize
+        for line in simulation_file:
+            line_data = line.split()
+            if len(line_data) == 1:
+                equilibrium_time = float(line_data[0])
+                break
 
+    # Return the equilibrium time
+    return equilibrium_time
 
 def get_equilibrium_iterations(file_path, equilibrium_time):
     equilibrium_iterations_data = deque([])
