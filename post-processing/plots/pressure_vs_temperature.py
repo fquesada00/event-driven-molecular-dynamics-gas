@@ -75,7 +75,7 @@ def get_pressure_with_error_at_velocity(particles, threshold, equilibrium_time, 
 
 
 def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions):
-    velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
+    velocities = [0.005, 0.01, 0.02]
     particle_mass = 1
     temperatures = []
     average_pressures = []
@@ -90,7 +90,7 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
 
     plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
                  ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
-    plt.xlabel("Energía Cinética (J)")
+    plt.xlabel("Energía Cinética Promedio (J)")
     plt.ylabel("Presión (N/m)")
     plt.show()
 
