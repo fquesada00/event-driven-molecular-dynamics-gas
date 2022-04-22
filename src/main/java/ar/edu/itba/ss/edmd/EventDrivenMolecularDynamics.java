@@ -79,7 +79,7 @@ public class EventDrivenMolecularDynamics {
         }
     }
 
-    public void run() throws IOException {
+    public void run(boolean debug) throws IOException {
         double fp = 1;
         double prevTime = 0;
         int eventCount = 0;
@@ -98,9 +98,11 @@ public class EventDrivenMolecularDynamics {
             if (!nextEvent.isValid()) continue;
 
             if (nextEvent.finished()){
-                System.out.println("Simulation finished after " + eventCount + " events and " + prevTime + " simulation seconds with fp = " + fp);
-                System.out.println("Events in threshold: " + eventInThresholdCount);
-                System.out.println("Remaining events: " + eventQueue.size());
+                if (debug) {
+                    System.out.println("Simulation finished after " + eventCount + " events and " + prevTime + " simulation seconds with fp = " + fp);
+                    System.out.println("Events in threshold: " + eventInThresholdCount);
+                    System.out.println("Remaining events: " + eventQueue.size());
+                }
                 break;
             }
 
@@ -111,12 +113,16 @@ public class EventDrivenMolecularDynamics {
             double newTime = nextEvent.getTime();
 
             if (fp < 0.5 + threshold && fp > 0.5 - threshold && timer == null) {
-                System.out.println("Timer set at " + newTime + " with fp = " + fp);
+                if (debug) {
+                    System.out.println("Timer set at " + newTime + " with fp = " + fp);
+                }
                 timer = new Timer();
                 eventInThresholdCount = 0;
                 eventQueue.add(new TimerEvent(newTime + this.equilibriumTime,timer));
             } else if((fp >= 0.5 + threshold|| fp <= 0.5 - threshold) && timer != null) {
-                System.out.println("Timer reset at " + newTime + " with fp = " + fp);
+                if (debug) {
+                    System.out.println("Timer reset at " + newTime + " with fp = " + fp);
+                }
                 timer.invalidate();
                 timer = null;
             }else if(timer != null) {

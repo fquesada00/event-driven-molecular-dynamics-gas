@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public class App {
     public static void main(String[] args) throws IOException {
+        boolean debug = Boolean.parseBoolean(System.getProperty("debug", "false"));
         String staticOutputFileName = System.getProperty("staticSimulationOutFileName", "static.txt");
         String dynamicOutputFileName = System.getProperty("dynamicSimulationOutFileName", "dynamic.txt");
         String summaryFileName = System.getProperty("summaryOutFileName", "summary.txt");
@@ -15,6 +16,6 @@ public class App {
         EventDrivenMolecularDynamics edmd = new EventDrivenMolecularDynamics(numberOfParticles, 0.24, 0.09, slitWidth,
                 velocity, 1.0, 0.001, threshold, equilibriumTime, staticOutputFileName, dynamicOutputFileName,
                 summaryFileName);
-        edmd.run();
+        edmd.run(debug);
     }
 }
