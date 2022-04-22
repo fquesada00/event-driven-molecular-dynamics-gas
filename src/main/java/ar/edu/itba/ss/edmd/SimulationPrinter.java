@@ -47,12 +47,18 @@ public class SimulationPrinter {
         printWriter.close();
     }
 
-    public void printStep(List<Particle> particles, Event event, double timeStep, boolean append) throws IOException {
+    public void printStep(List<Particle> particles, Event event, double timeStep, boolean append,boolean isFirst) throws IOException {
         PrintWriter printWriter = new PrintWriter(new FileWriter(dynamicOutputFileName, append));
-
+        if (!isFirst) {
+            printWriter.println();
+        }
         printWriter.printf("%f\n", timeStep);
-        for (Particle particle : particles) {
-            printWriter.printf("%f\t%f\t%f\t%f\t%c\n", particle.x(), particle.y(), particle.vx(), particle.vy(), event.getEventType(particle));
+        for (int i = 0; i < particles.size(); i++) {
+            Particle particle = particles.get(i);
+            if(i != 0){
+                printWriter.println();
+            }
+            printWriter.printf("%f\t%f\t%f\t%f\t%c", particle.x(), particle.y(), particle.vx(), particle.vy(), event.getEventType(particle));
         }
 
         printWriter.close();

@@ -19,9 +19,9 @@ public class EventDrivenMolecularDynamics {
     private final SimulationPrinter simulationPrinter;
     private final double threshold;
 
-    private final int equilibriumIterations;
+    private final double equilibriumTime;
 
-    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double threshold, int equilibriumIterations, String staticOutputFileName, String dynamicOutputFileName, String summaryFileName) {
+    public EventDrivenMolecularDynamics(int particleCount, double boxWidth, double boxHeight, double slitWidth, double initialVelocity, double particlesMass, double particleRadius, double threshold, double equilibriumTime, String staticOutputFileName, String dynamicOutputFileName, String summaryFileName) {
         this.particleCount = particleCount;
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
@@ -30,7 +30,7 @@ public class EventDrivenMolecularDynamics {
         this.fixedObstacles = new ArrayList<>();
         this.eventQueue = new PriorityQueue<>();
         this.threshold = threshold;
-        this.equilibriumIterations = equilibriumIterations;
+        this.equilibriumTime = equilibriumTime;
         this.simulationPrinter = new SimulationPrinter(staticOutputFileName, dynamicOutputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth, particlesMass, particleRadius);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
         initializeFixedObstacles();
@@ -87,8 +87,9 @@ public class EventDrivenMolecularDynamics {
         long startExecTime = System.currentTimeMillis();
 
         simulationPrinter.printStaticParameters();
-        int consecutiveIterations = 0;
-        while (fp >= 0.5 + threshold || fp <= 0.5 - threshold || consecutiveIterations < equilibriumIterations) {
+        Timer timer = null;
+        int eventInThresholdCount = 0;
+        while (true) {
 
             Event nextEvent = eventQueue.poll();
 
@@ -96,16 +97,32 @@ public class EventDrivenMolecularDynamics {
 
             if (!nextEvent.isValid()) continue;
 
-            if (fp < 0.5 + threshold && fp > 0.5 - threshold) {
-                consecutiveIterations++;
-            } else {
-                consecutiveIterations = 0;
+            if (nextEvent.finished()){
+                System.out.println("Simulation finished after " + eventCount + " events and " + prevTime + " simulation seconds with fp = " + fp);
+                System.out.println("Events in threshold: " + eventInThresholdCount);
+                System.out.println("Remaining events: " + eventQueue.size());
+                break;
             }
 
-            simulationPrinter.printStep(particles, nextEvent, prevTime, eventCount != 0);
+            simulationPrinter.printStep(particles, nextEvent, prevTime, eventCount != 0, eventCount == 0);
+
             eventCount++;
 
             double newTime = nextEvent.getTime();
+
+            if (fp < 0.5 + threshold && fp > 0.5 - threshold && timer == null) {
+                System.out.println("Timer set at " + newTime + " with fp = " + fp);
+                timer = new Timer();
+                eventInThresholdCount = 0;
+                eventQueue.add(new TimerEvent(newTime + this.equilibriumTime,timer));
+            } else if((fp >= 0.5 + threshold|| fp <= 0.5 - threshold) && timer != null) {
+                System.out.println("Timer reset at " + newTime + " with fp = " + fp);
+                timer.invalidate();
+                timer = null;
+            }else if(timer != null) {
+                eventInThresholdCount++;
+            }
+
 
             updateParticlePositions(newTime - prevTime);
 

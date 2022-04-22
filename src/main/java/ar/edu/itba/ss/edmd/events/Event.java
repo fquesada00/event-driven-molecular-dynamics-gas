@@ -21,6 +21,10 @@ public abstract class Event implements Comparable<Event> {
         return false;
     }
 
+    public boolean finished() {
+        return false;
+    }
+
     public List<Event> execute(List<Particle> particles, List<FixedObstacle> obstacles, double boxWidth, double boxHeight, double slitWidth) {
         throw new UnsupportedOperationException();
     }
