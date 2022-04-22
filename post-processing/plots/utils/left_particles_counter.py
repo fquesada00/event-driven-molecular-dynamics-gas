@@ -34,10 +34,6 @@ def left_particles_counter(simulation_dynamic_output_file_name, simulation_stati
     left_particle_fraction = []
     right_particle_fraction = []
 
-    # Load first fraction of the simulation
-    left_particle_fraction.append(1.0)
-    right_particle_fraction.append(0.0)
-
     for i in range(len(left_particle_count)):
         left_particle_fraction.append(left_particle_count[i] / particle_count)
         right_particle_fraction.append(1 - left_particle_fraction[i])

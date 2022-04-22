@@ -6,12 +6,13 @@ from .utils import left_particles_counter
 
 
 def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equilibrium_time):
-    print(f"Running simulation with {particle_count} particles, {slit_width} slit width and {threshold} threshold. Time to reach on equilibrium state: {equilibrium_time}.")
+    print(
+        f"Running simulation with {particle_count} particles, {slit_width} slit width and {threshold} threshold. Time to reach on equilibrium state: {equilibrium_time}.")
 
     simulation_dynamic_output_file_name = "dynamic.txt"
     simulation_static_output_file_name = "static.txt"
 
-    cmd = f"java -DnumberOfParticles={particle_count} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -DslitWidth={slit_width} -Dthreshold={threshold} -DequilibriumTime={equilibrium_time} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
+    cmd = f"java -DnumberOfParticles={particle_count} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -DslitWidth={slit_width} -Dthreshold={threshold} -DequilibriumTime={equilibrium_time} -jar ./target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
@@ -22,12 +23,15 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
     plot.plot(time_steps, left_particles_fraction)
     plot.plot(time_steps, right_particle_fraction)
 
+    plot.axhline(y=0.5+threshold, color='r', linestyle='--')
+    plot.axhline(y=0.5-threshold, color='r', linestyle='--')
+
     plot.xlabel("Tiempo (s)")
     plot.ylabel("Fracción de partículas en cada recinto")
 
     # plot.legend(["100 particulas", "200 particulas", "350 particulas"])
     plot.legend(["Fracción de partículas en recinto izquierdo",
-                "Fracción de partículas en recinto derecho"])
+                "Fracción de partículas en recinto derecho", "Umbral"])
     plot.show()
     plot.close()
 
