@@ -14,7 +14,7 @@ def pressure_at_velocity(particles, threshold, equilibrium_iterations, velocity)
     simulation_dynamic_output_file_name = "dynamic.txt"
     simulation_static_output_file_name = "static.txt"
 
-    cmd = f"java -DnumberOfParticles={particles} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -Dthreshold={threshold} -DequilibriumIterations={equilibrium_iterations} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
+    cmd = f"java -DnumberOfParticles={particles} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -Dthreshold={threshold} -DequilibriumIterations={equilibrium_iterations} -Dvelocity={velocity} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
@@ -23,7 +23,6 @@ def pressure_at_velocity(particles, threshold, equilibrium_iterations, velocity)
     simulation_perimeter = (simulation.box_width + simulation.box_height) * 2
     event_type = None
     detected_collision = False
-    pressures = []
     total_impulse = 0
     equilibrium_start_time = equilibrium_end_time = 0
     last_n_iterations = get_last_n_iterations(
