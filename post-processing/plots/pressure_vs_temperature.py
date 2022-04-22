@@ -75,8 +75,9 @@ def get_pressure_with_error_at_velocity(particles, threshold, equilibrium_time, 
     return mean(pressures), stdev(pressures)
 
 
-def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions):
+def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions, adjust):
     velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
+    # velocities = [0.01, 0.02, 0.025]
     particle_mass = 1
     temperatures = []
     average_pressures = []
@@ -89,23 +90,22 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
         average_pressures.append(average_pressure)
         yerror_bars.append(yerror_bar)
 
-    m_tries = list(np.arange(10000, 15000, 1))
+    if adjust:
+        m_tries = list(np.arange(10000, 15000, 1))
 
-    errors = quadratic_error(temperatures, average_pressures, m_tries)
+        errors = quadratic_error(temperatures, average_pressures, m_tries)
 
-    min_error = min(errors)
-    min_error_index = errors.index(min_error)
-    print(f"Minimum error: {min_error}")
-    print(f"Minimum error index: {min_error_index}")
-    print(f"Minimum error m: {m_tries[min_error_index]}")
+        min_error = min(errors)
+        min_error_index = errors.index(min_error)
+        print(f"Minimum error: {min_error}")
+        print(f"Minimum error index: {min_error_index}")
+        print(f"Minimum error m: {m_tries[min_error_index]}")
+
+        plt.plot(temperatures, m_tries[min_error_index]
+            * np.array(temperatures), '--k')
 
     plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
                  ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
-    plt.plot(temperatures, m_tries[min_error_index]
-             * np.array(temperatures), '--k')
-    plt.xlabel("Temperature")
-    plt.ylabel("Pressure")
-    plt.show()
     plt.xlabel("Energía Cinética (J)")
     plt.ylabel("Presión (N/m)")
     plt.show()
@@ -123,8 +123,9 @@ if __name__ == "__main__":
                         help="The threshold of the left particles fraction used in the simulations. Defaults to 0.05.", dest="threshold", required=False)
     parser.add_argument("--equilibrium-time", default=10,
                         help="Time to reach from the equilibrium state of the simulations, in seconds. Defaults to 10 seconds.", dest="equilibrium_time", required=False)
-
+    parser.add_argument("--adjust", action="store_true", default=False, 
+                        help="Adjust the parameters of the simulation plot (P~T).", dest="adjust", required=False)
     args = parser.parse_args()
 
     pressure_vs_temperature_plot(int(args.particles), float(
-        args.threshold), float(args.equilibrium_time), int(args.repetitions))
+        args.threshold), float(args.equilibrium_time), int(args.repetitions), bool(args.adjust))
