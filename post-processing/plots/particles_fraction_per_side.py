@@ -11,7 +11,7 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
     simulation_dynamic_output_file_name = "dynamic.txt"
     simulation_static_output_file_name = "static.txt"
 
-    cmd = f"java -DnumberOfParticles={particle_count} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -DslitWidth={slit_width} -Dthreshold={threshold} -DequilibriumIterations={equilibrium_iterations} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
+    cmd = f"java -DnumberOfParticles={particle_count} -DdynamicSimulationOutFileName={simulation_dynamic_output_file_name} -DstaticSimulationOutFileName={simulation_static_output_file_name} -DslitWidth={slit_width} -Dthreshold={threshold} -DequilibriumTime={equilibrium_time} -jar ../target/event-driven-molecular-dynamics-gas-1.0-SNAPSHOT.jar"
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
