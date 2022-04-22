@@ -1,17 +1,34 @@
-import argparse
+def find_delta_t(input_File):
+    input_File.seek(0)
+    max_delta = 0
+    prev_step = 0
+    for line in input_File:
+        line_data = line.split()
+        if len(line_data) == 1:
+            delta = float(line_data[0]) - prev_step
+            if delta > max_delta:
+                max_delta = delta
+            prev_step = float(line_data[0])
 
-from ..helpers import parse_static_file
+    return max_delta
 
 
-def write_animation(out_filename, input_file, N, radius, mass, box_width):
+def write_animation(out_filename, input_file, N, radius, mass, box_width, delta_t):
     xyz_file = open(out_filename, "w")
     input_file.seek(0)
+    current_step = 0
+    print_step = False
     for i, line in enumerate(input_file):
         line_data = line.split()
         # timestep and momentum
         if len(line_data) == 1:
-            xyz_file.write(f'{N}\ncomment\n')
-        else:
+            if(float(line_data[0]) > current_step*delta_t):
+                current_step += 1
+                print_step = True
+                xyz_file.write(f'{N}\ncomment\n')
+            else:
+                print_step = False
+        elif print_step:
             color = [255, 0, 0] if float(
                 line_data[0]) > (box_width / 2) else [0, 0, 255]
             xyz_file.write(
