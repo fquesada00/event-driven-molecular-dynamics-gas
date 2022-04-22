@@ -38,7 +38,7 @@ public class EventDrivenMolecularDynamics {
     }
 
     private void initializeParticles(int particleCount, double initialVelocity, double particlesMass, double particleRadius) {
-        Random random = new Random(1);
+        Random random = new Random();
 
         for (int i = 0; i < particleCount; i++) {
             double x = random.nextDouble(particleRadius, boxWidth / 2 - particleRadius);
