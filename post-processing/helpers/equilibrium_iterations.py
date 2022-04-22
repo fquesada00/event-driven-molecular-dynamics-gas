@@ -20,11 +20,11 @@ def get_equilibrium_iterations(file_path, equilibrium_time):
                     # in the equilibrium time range, if not, then stop
                     break
 
-                # Add to the iteration data
+                # Add iteration data to equilibrium iterations data
                 equilibrium_iterations_data.appendleft(list(iteration_data))
 
-                # Add time to the iteration data
-                iteration_data.appendleft(iteration_time)
+                # Add time to equilibrium iterations data
+                equilibrium_iterations_data.appendleft(f"{iteration_time}")
 
                 # Prepare for next iteration
                 iteration_data = deque([])
