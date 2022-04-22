@@ -16,5 +16,5 @@ if __name__ == '__main__':
     simulation = parse_static_file(args.simulation_static_data)
     write_walls(args.walls_out_file_name, simulation)
     write_animation(args.out_file_name, args.simulation_steps,
-                    simulation.particle_count)
+                    simulation.particle_count, simulation.particle_radius, simulation.particle_mass, simulation.box_width)
     args.simulation_steps.close()

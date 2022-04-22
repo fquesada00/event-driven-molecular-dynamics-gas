@@ -33,11 +33,12 @@ public class EventDrivenMolecularDynamics {
         this.equilibriumIterations = equilibriumIterations;
         this.simulationPrinter = new SimulationPrinter(staticOutputFileName, dynamicOutputFileName, summaryFileName, particleCount, boxWidth, boxHeight, slitWidth, particlesMass, particleRadius);
         initializeParticles(particleCount, initialVelocity, particlesMass, particleRadius);
+        initializeFixedObstacles();
         calculateInitialEvents();
     }
 
     private void initializeParticles(int particleCount, double initialVelocity, double particlesMass, double particleRadius) {
-        Random random = new Random();
+        Random random = new Random(1);
 
         for (int i = 0; i < particleCount; i++) {
             double x = random.nextDouble(particleRadius, boxWidth / 2 - particleRadius);
@@ -65,8 +66,8 @@ public class EventDrivenMolecularDynamics {
     }
 
     private void initializeFixedObstacles() {
-        FixedObstacle topSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight + slitWidth) / 2, 0);
-        FixedObstacle bottomSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight - slitWidth) / 2, 0);
+        FixedObstacle topSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight + slitWidth) / 2, 0.000001);
+        FixedObstacle bottomSlitVertex = new FixedObstacle(boxWidth / 2, (boxHeight - slitWidth) / 2, 0.000001);
 
         fixedObstacles.add(topSlitVertex);
         fixedObstacles.add(bottomSlitVertex);
@@ -101,10 +102,12 @@ public class EventDrivenMolecularDynamics {
                 consecutiveIterations = 0;
             }
 
-            simulationPrinter.printStep(particles, nextEvent, prevTime, true);
+            simulationPrinter.printStep(particles, nextEvent, prevTime, eventCount != 0);
             eventCount++;
 
             double newTime = nextEvent.getTime();
+
+//            if (newTime == prevTime) throw new RuntimeException("Time is not increasing");
 
             updateParticlePositions(newTime - prevTime);
 
@@ -170,7 +173,7 @@ public class EventDrivenMolecularDynamics {
             double collisionTime = p.collides(obstacle) + offsetTime;
 
             if (collisionTime != Double.POSITIVE_INFINITY && collisionTime >= 0) {
-                eventQueue.add(new Event(collisionTime, p, obstacle, PARTICLES_COLLISION));
+                eventQueue.add(new Event(collisionTime, p, obstacle, FIXED_OBSTACLE_COLLISION));
             }
         }
     }

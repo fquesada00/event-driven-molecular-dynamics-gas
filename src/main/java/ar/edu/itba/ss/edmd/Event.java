@@ -21,7 +21,6 @@ public class Event implements Comparable<Event> {
     public Event(double time, Particle particle, FixedObstacle obstacle, EventType eventType) {
         this(time, particle, (Particle) null, eventType);
         this.fixedObstacle = obstacle;
-
     }
 
     public double getTime() {
@@ -52,4 +51,6 @@ public class Event implements Comparable<Event> {
     public int compareTo(Event o) {
         return Double.compare(this.time, o.time);
     }
+
+
 }

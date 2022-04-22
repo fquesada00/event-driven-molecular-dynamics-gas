@@ -134,7 +134,7 @@ public class Particle {
 
         Vector2D normal = this.position.subtract(obstacle.position());
 
-        double angle = normal.angle(new Vector2D(1, 0));
+        double angle = new Vector2D(1, 0).angle(normal);
 
         double cn = 1;
         double ct = 1;

@@ -27,7 +27,11 @@ public record Vector2D(double x, double y) {
     }
 
     public double angle(Vector2D other) {
-        return Math.acos(this.dot(other) / (this.length() * other.length()));
+        double angle =  Math.acos(this.dot(other)/ (this.length() * other.length()));
+        if(this.x * other.y - this.y * other.x < 0) {
+            angle = -angle;
+        }
+        return angle;
     }
 
     public Vector2D applyTransform(Matrix2x2 transform) {
