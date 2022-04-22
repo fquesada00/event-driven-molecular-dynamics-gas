@@ -23,6 +23,9 @@ def get_equilibrium_iterations(file_path, equilibrium_time):
                 # Add to the iteration data
                 equilibrium_iterations_data.appendleft(list(iteration_data))
 
+                # Add time to the iteration data
+                iteration_data.appendleft(iteration_time)
+
                 # Prepare for next iteration
                 iteration_data = deque([])
             else:
