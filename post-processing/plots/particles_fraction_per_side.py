@@ -5,8 +5,8 @@ import matplotlib.pyplot as plot
 from .utils import left_particles_counter
 
 
-def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equilibrium_iterations):
-    print(f"Running simulation with {particle_count} particles, {slit_width} slit width and {threshold} left particles fraction threshold. Number of equilibrium iterations: {equilibrium_iterations}.")
+def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equilibrium_time):
+    print(f"Running simulation with {particle_count} particles, {slit_width} slit width and {threshold} threshold. Time to reach on equilibrium state: {equilibrium_time}.")
 
     simulation_dynamic_output_file_name = "dynamic.txt"
     simulation_static_output_file_name = "static.txt"
@@ -36,16 +36,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--slit_width", default=0.02,
+    parser.add_argument("--slit-width", default=0.02,
                         help="The fixed slit width used in the simulations. Defaults to 0.02.", dest="slit_width", required=False)
     parser.add_argument("--particles", default=100,
                         help="The number of particles used in the simulations. Defaults to 100.", dest="particles", required=False)
     parser.add_argument("--threshold", default=0.05,
                         help="The threshold of the left particles fraction used in the simulations. Defaults to 0.05.", dest="threshold", required=False)
-    parser.add_argument("--equilibrium-iterations", default=0.05,
-                    help="The number of consecutive iterations on the equilibrium state used in the simulations. Defaults to 10.", dest="equilibrium_iterations", required=False)
+    parser.add_argument("--equilibrium-time", default=10,
+                        help="Time to reach from the equilibrium state of the simulations, in seconds. Defaults to 10 seconds.", dest="equilibrium_time", required=False)
 
     args = parser.parse_args()
 
     particles_fraction_per_side_plot(
-        int(args.particles), float(args.slit_width), float(args.threshold), int(args.equilibrium_iterations))
+        int(args.particles), float(args.slit_width), float(args.threshold), float(args.equilibrium_time))

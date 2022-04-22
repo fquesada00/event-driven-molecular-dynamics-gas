@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 matplotlib = "*"
+file-read-backwards = "*"
 
 [dev-packages]
 
