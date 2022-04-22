@@ -2,7 +2,8 @@ import argparse
 import os
 from statistics import mean, stdev
 import matplotlib.pyplot as plt
-
+import numpy as np
+from .quadratic_error import quadratic_error
 from ..helpers import get_equilibrium_iterations, parse_static_file
 from ..models.CollisionType import ColissionType
 
@@ -75,7 +76,7 @@ def get_pressure_with_error_at_velocity(particles, threshold, equilibrium_time, 
 
 
 def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions):
-    velocities = [0.005, 0.01, 0.02]
+    velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
     particle_mass = 1
     temperatures = []
     average_pressures = []
@@ -88,9 +89,24 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
         average_pressures.append(average_pressure)
         yerror_bars.append(yerror_bar)
 
+    m_tries = list(np.arange(10000, 15000, 1))
+
+    errors = quadratic_error(temperatures, average_pressures, m_tries)
+
+    min_error = min(errors)
+    min_error_index = errors.index(min_error)
+    print(f"Minimum error: {min_error}")
+    print(f"Minimum error index: {min_error_index}")
+    print(f"Minimum error m: {m_tries[min_error_index]}")
+
     plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
                  ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
-    plt.xlabel("Energía Cinética Promedio (J)")
+    plt.plot(temperatures, m_tries[min_error_index]
+             * np.array(temperatures), '--k')
+    plt.xlabel("Temperature")
+    plt.ylabel("Pressure")
+    plt.show()
+    plt.xlabel("Energía Cinética (J)")
     plt.ylabel("Presión (N/m)")
     plt.show()
 

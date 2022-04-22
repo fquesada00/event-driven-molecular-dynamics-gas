@@ -16,19 +16,20 @@ def find_delta_t(input_File):
 def write_animation(out_filename, input_file, N, radius, mass, box_width, delta_t):
     xyz_file = open(out_filename, "w")
     input_file.seek(0)
-    current_step = 0
-    print_step = False
+    # current_step = 0
+    # print_step = False
     for i, line in enumerate(input_file):
         line_data = line.split()
         # timestep and momentum
         if len(line_data) == 1:
-            if(float(line_data[0]) > current_step*delta_t):
-                current_step += 1
-                print_step = True
-                xyz_file.write(f'{N}\ncomment\n')
-            else:
-                print_step = False
-        elif print_step:
+            # if(float(line_data[0]) > current_step*delta_t):
+            # current_step += 1
+            # print_step = True
+            xyz_file.write(f'{N}\ncomment\n')
+            # else:
+            #     print_step = False
+        # elif print_step:
+        else:
             color = [255, 0, 0] if float(
                 line_data[0]) > (box_width / 2) else [0, 0, 255]
             xyz_file.write(
