@@ -22,7 +22,8 @@ def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
     print("Done")
 
     simulation = parse_static_file(simulation_static_output_file_name)
-    simulation_perimeter = (simulation.box_width + simulation.box_height) * 2
+    simulation_perimeter = (simulation.box_width + simulation.box_height) * \
+        2 + (simulation.box_height - simulation.slit_width) * 2
     event_type = None
     detected_collision = False
     total_impulse = 0
@@ -32,19 +33,21 @@ def pressure_at_velocity(particles, threshold, equilibrium_time, velocity):
     for iterations in last_n_iterations:
         iteration_data = iterations.split()
         if len(iteration_data) == 1:
-            # Reset
-            detected_collision = False
 
             # First event (no detected collision yet)
             if event_type is None:
                 equilibrium_start_time = float(iteration_data[0])
                 continue
 
+            if not detected_collision:
+                continue
             # Next event (detected collision)
             if event_type == ColissionType.PARTICLE_X_WALL_COLLISION:
                 total_impulse += abs(2 * simulation.particle_mass * vy)
             elif event_type == ColissionType.PARTICLE_Y_WALL_COLLISION:
                 total_impulse += abs(2 * simulation.particle_mass * vx)
+            # Reset
+            detected_collision = False
 
             equilibrium_end_time = float(iteration_data[0])
         elif not detected_collision and (iteration_data[4] == "x" or iteration_data[4] == "y"):
