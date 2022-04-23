@@ -14,7 +14,7 @@ public class App {
         double equilibriumTime = Double.parseDouble(System.getProperty("equilibriumTime", "0"));
         double velocity = Double.parseDouble(System.getProperty("velocity", "0.01"));
         EventDrivenMolecularDynamics edmd = new EventDrivenMolecularDynamics(numberOfParticles, 0.24, 0.09, slitWidth,
-                velocity, 1.0, 0.001, threshold, equilibriumTime, staticOutputFileName, dynamicOutputFileName,
+                velocity, 1.0, 0.0015, threshold, equilibriumTime, staticOutputFileName, dynamicOutputFileName,
                 summaryFileName);
         edmd.run(debug);
     }
