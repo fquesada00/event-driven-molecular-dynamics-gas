@@ -1,4 +1,5 @@
 import argparse
+from cProfile import label
 import os
 from statistics import mean, stdev
 import sys
@@ -80,13 +81,13 @@ def get_pressure_with_error_at_velocity(particles, threshold, equilibrium_time, 
 
 
 def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetitions, fit, fit_threshold):
-    velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
-    # velocities = [0.01, 0.02, 0.025]
+    # velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
+    velocities = [0.01, 0.02, 0.025]
     particle_mass = 1
     temperatures = []
     average_pressures = []
     yerror_bars = []
-    print(fit_threshold)
+    legends = []
     for velocity in velocities:
         average_pressure, yerror_bar = get_pressure_with_error_at_velocity(
             particles, threshold, equilibrium_time, velocity, repetitions)
@@ -108,17 +109,28 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
         print(f"Minimum error index: {min_error_index}")
         print(f"Minimum error m: {m_tries[min_error_index]}")
         plt.subplot(1, 2, 2)
+        plt.plot(m_tries[min_error_index], min_error, "ro")
+        plt.annotate(
+            f"({round(m_tries[min_error_index],3)}, {round(min_error,3)})",
+            (m_tries[min_error_index], min_error),
+            textcoords="offset points",
+            xytext=(0, 10),
+            ha='center')
         plt.plot(m_tries, errors)
+        plt.legend(["Error mínimo"], loc='upper left')
         plt.xlabel("Pendiente")
         plt.ylabel("Error cuadrático")
         plt.subplot(1, 2, 1)
         plt.plot(temperatures, m_tries[min_error_index]
                  * np.array(temperatures), '--k')
+        legends.append("Ajuste modelo lineal")
 
     plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
                  ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
+    legends.append("Datos (promedio de simulaciones)")
     plt.xlabel("Energía Cinética Promedio (J)")
     plt.ylabel("Presión (N/m)")
+    plt.legend(legends)
     plt.tight_layout()
 
     plt.show()
