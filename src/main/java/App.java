@@ -9,8 +9,8 @@ public class App {
         String dynamicOutputFileName = System.getProperty("dynamicSimulationOutFileName", "dynamic.txt");
         String summaryFileName = System.getProperty("summaryOutFileName", "summary.txt");
         int numberOfParticles = Integer.parseInt(System.getProperty("numberOfParticles", "100"));
-        double slitWidth = Double.parseDouble(System.getProperty("slitWidth", "0.02"));
-        double threshold = Double.parseDouble(System.getProperty("threshold", "0.05"));
+        double slitWidth = Double.parseDouble(System.getProperty("slitWidth", "0.01"));
+        double threshold = Double.parseDouble(System.getProperty("threshold", "0.15"));
         double equilibriumTime = Double.parseDouble(System.getProperty("equilibriumTime", "0"));
         double velocity = Double.parseDouble(System.getProperty("velocity", "0.01"));
         EventDrivenMolecularDynamics edmd = new EventDrivenMolecularDynamics(numberOfParticles, 0.24, 0.09, slitWidth,

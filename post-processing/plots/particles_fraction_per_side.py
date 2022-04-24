@@ -19,7 +19,7 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
 
     left_particles_fraction, right_particle_fraction, time_steps = left_particles_counter(
         simulation_dynamic_output_file_name, simulation_static_output_file_name)
-
+    plot.figure(figsize=(15, 10))
     plot.plot(time_steps, left_particles_fraction)
     plot.plot(time_steps, right_particle_fraction)
 
@@ -31,7 +31,9 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
 
     # plot.legend(["100 particulas", "200 particulas", "350 particulas"])
     plot.legend(["Fracción de partículas en recinto izquierdo",
-                "Fracción de partículas en recinto derecho", "Umbral"])
+                "Fracción de partículas en recinto derecho", "Umbral"], loc='upper right')
+    plot.savefig(
+        f"particles_fraction_per_side_{particle_count}_{slit_width}_{threshold}.png", dpi=300,)
     plot.show()
     plot.close()
 

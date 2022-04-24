@@ -5,6 +5,7 @@ from statistics import mean, stdev
 import matplotlib.pyplot as plot
 from ..helpers.equilibrium_iterations import get_equilibrium_time
 
+
 def get_simulation_equilibrium_time(threshold, slit_width, particles):
     simulation_dynamic_output_file_name = "dynamic.txt"
 
@@ -15,6 +16,7 @@ def get_simulation_equilibrium_time(threshold, slit_width, particles):
 
     return get_equilibrium_time(simulation_dynamic_output_file_name)
 
+
 def equilibrium_time_with_error(threshold, repetitions, slit_width, particles):
     equilibrium_times = []
     for repetition in range(repetitions):
@@ -22,35 +24,38 @@ def equilibrium_time_with_error(threshold, repetitions, slit_width, particles):
         simulation_equilibrium_time = get_simulation_equilibrium_time(
             threshold, slit_width, particles)
         equilibrium_times.append(simulation_equilibrium_time)
-    
+
     return mean(equilibrium_times), stdev(equilibrium_times)
-        
+
 
 def equilibrium_time_vs_number_of_particles(threshold, repetitions, slit_width):
-    particle_count = [100, 150, 200]
+    particle_count = [50, 70, 85, 100, 125, 140, 165, 180, 200, 250, 300]
     average_execution_times = []
     yerror_bars = []
+    plot.figure(figsize=(15, 10))
+
     for total_particles in particle_count:
-        average_equilibrium_time, yerror_bar = equilibrium_time_with_error(            
+        average_equilibrium_time, yerror_bar = equilibrium_time_with_error(
             threshold, repetitions, slit_width, total_particles)
         average_execution_times.append(average_equilibrium_time)
         yerror_bars.append(yerror_bar)
-    
 
     plot.errorbar(particle_count, average_execution_times, ls="none",
                   yerr=yerror_bars, ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
 
     plot.xlabel("Número de partículas")
     plot.ylabel("Tiempo de equilibrio (s)")
-
+    plot.savefig("equilibrium_time_vs_number_of_particles.png", dpi=300)
     plot.show()
     plot.close()
+
 
 def equilibrium_time_vs_slit_width(threshold, repetitions, particles):
     slit_widths = [0.005, 0.01, 0.02, 0.05, 0.065, 0.08]
     # slit_widths = [0.02, 0.05]
     average_execution_times = []
     yerror_bars = []
+    plot.figure(figsize=(15, 10))
     for slit_width in slit_widths:
         average_equilibrium_time, yerror_bar = equilibrium_time_with_error(
             threshold, repetitions, slit_width, particles)
@@ -58,11 +63,13 @@ def equilibrium_time_vs_slit_width(threshold, repetitions, particles):
         yerror_bars.append(yerror_bar)
 
     plot.errorbar(slit_widths, average_execution_times, ls="none",
-                    yerr=yerror_bars, ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
-    
+                  yerr=yerror_bars, ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
+
     plot.xlabel("Ancho del tabique (m)")
     plot.ylabel("Tiempo de equilibrio (s)")
+    plot.savefig("equilibrium_time_vs_slit_width.png", dpi=300)
     plot.show()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -74,6 +74,8 @@ public class Particle {
                     } else {
                         return (boxWidth - radius - position.x()) / velocity.x();
                     }
+                }else {
+                    return (boxWidth - radius - position.x()) / velocity.x();
                 }
             } else if (velocity.x() < 0) {
                 return (radius - position.x()) / velocity.x();
@@ -94,6 +96,8 @@ public class Particle {
                     } else {
                         return (radius - position.x()) / velocity.x();
                     }
+                }else{
+                    return (radius - position.x()) / velocity.x();
                 }
             }
         }
@@ -179,7 +183,11 @@ public class Particle {
     }
 
     public void updatePosition(double deltaTime) {
-        this.position = this.position.add(this.velocity.scale(deltaTime));
+        Vector2D newPosition = this.position.add(this.velocity.scale(deltaTime));
+        if(newPosition.x() < 0 || newPosition.x() > 0.24 || newPosition.y() < 0 || newPosition.y() > 0.09) {
+            System.out.println("error");
+        }
+        this.position = newPosition;
     }
 
     public boolean overlaps(Particle other) {
