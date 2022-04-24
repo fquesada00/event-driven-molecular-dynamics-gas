@@ -108,7 +108,8 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
         print(f"Minimum error: {min_error}")
         print(f"Minimum error index: {min_error_index}")
         print(f"Minimum error m: {m_tries[min_error_index]}")
-        plt.subplot(1, 2, 2)
+        # plt.subplot(1, 2, 2)
+        plt.figure(1)
         plt.plot(m_tries[min_error_index], min_error, "ro")
         plt.annotate(
             f"({round(m_tries[min_error_index],3)}, {round(min_error,3)})",
@@ -120,7 +121,8 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
         plt.legend(["Error mínimo"], loc='upper left')
         plt.xlabel("Pendiente")
         plt.ylabel("Error cuadrático")
-        plt.subplot(1, 2, 1)
+        # plt.subplot(1, 2, 1)
+        plt.figure(2)
         plt.plot(temperatures, m_tries[min_error_index]
                  * np.array(temperatures), '--k')
         legends.append("Ajuste modelo lineal")
@@ -134,7 +136,7 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
     plt.tight_layout()
 
     if fit:
-        plt.figure(2)
+        plt.figure(3)
         plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
                         ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
         plt.xlabel("Energía Cinética Promedio (J)")
