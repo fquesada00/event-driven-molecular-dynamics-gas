@@ -133,6 +133,14 @@ def pressure_vs_temperature_plot(particles, threshold, equilibrium_time, repetit
     plt.legend(legends)
     plt.tight_layout()
 
+    if fit:
+        plt.figure(2)
+        plt.errorbar(temperatures, average_pressures, yerr=yerror_bars, ls="none",
+                        ecolor='blue', marker='o', color="red", elinewidth=0.5, capsize=5)
+        plt.xlabel("Energía Cinética Promedio (J)")
+        plt.ylabel("Presión (N/m)")
+
+
     plt.show()
 
 

@@ -27,11 +27,11 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
     plot.axhline(y=0.5-threshold, color='r', linestyle='--')
 
     plot.xlabel("Tiempo (s)")
-    plot.ylabel("Fracción de partículas en cada recinto")
+    plot.ylabel("Fracción de partículas en recinto")
 
     # plot.legend(["100 particulas", "200 particulas", "350 particulas"])
-    plot.legend(["Fracción de partículas en recinto izquierdo",
-                "Fracción de partículas en recinto derecho", "Umbral"], loc='upper right')
+    plot.legend(["Recinto izquierdo",
+                "Recinto derecho", "Umbral"], loc='upper right')
     plot.savefig(
         f"particles_fraction_per_side_{particle_count}_{slit_width}_{threshold}.png", dpi=300,)
     plot.show()
