@@ -2,7 +2,6 @@ import argparse
 from cProfile import label
 import os
 from statistics import mean, stdev
-import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from .quadratic_error import quadratic_error
