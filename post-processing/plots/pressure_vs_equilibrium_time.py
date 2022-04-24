@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from ..helpers import get_equilibrium_iterations, parse_static_file
 
 # Only for testing
+
+
 def pressures_every_delta_eq_in_simulation(particles, threshold, velocity, equilibrium_time, delta_eq):
     print(
         f"Running simulation with {particles} particles, {velocity} velocity and {threshold} threshold. Time to reach on equilibrium state: {equilibrium_time}, with delta equilibrium of {delta_eq}.")
@@ -16,7 +18,7 @@ def pressures_every_delta_eq_in_simulation(particles, threshold, velocity, equil
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
-    
+
     simulation = parse_static_file(simulation_static_output_file_name)
     simulation_perimeter = (simulation.box_width + simulation.box_height) * \
         2 + (simulation.box_height - simulation.slit_width) * 2
@@ -37,7 +39,8 @@ def pressures_every_delta_eq_in_simulation(particles, threshold, velocity, equil
                 # If the delta_eq is reached, load data and reset impulse
                 if (equilibrium_start_time + (delta_eq * (current_delta_eq_index + 1))) < float(iteration_data[0]):
                     # Load pressure and time step
-                    pressure = (total_impulse / delta_eq) / simulation_perimeter
+                    pressure = (total_impulse / delta_eq) / \
+                        simulation_perimeter
                     pressures.append(pressure)
                     time_steps.append(delta_eq * (current_delta_eq_index + 1))
 
@@ -76,7 +79,7 @@ def pressures_every_delta_eq(particles, threshold, velocity, equilibrium_time, d
     print(f"Executing: {cmd}")
     os.system(cmd)
     print("Done")
-    
+
     simulation = parse_static_file(simulation_static_output_file_name)
     simulation_perimeter = (simulation.box_width + simulation.box_height) * \
         2 + (simulation.box_height - simulation.slit_width) * 2
@@ -85,7 +88,8 @@ def pressures_every_delta_eq(particles, threshold, velocity, equilibrium_time, d
     last_n_iterations = get_equilibrium_iterations(
         simulation_dynamic_output_file_name, equilibrium_time)
 
-    delta_eqs = [i * delta_eq for i in range(1, int(equilibrium_time / delta_eq) + 1)]
+    delta_eqs = [
+        i * delta_eq for i in range(1, int(equilibrium_time / delta_eq) + 1)]
 
     pressures = []
     time_steps = []
@@ -131,21 +135,22 @@ def pressures_every_delta_eq(particles, threshold, velocity, equilibrium_time, d
 
 def pressure_vs_equilibrium_time_plot(particles, threshold, equilibrium_time, delta_eq):
     velocities = [0.005, 0.01, 0.02, 0.025, 0.03, 0.035]
-    # velocities = [0.01, 0.02, 0.025]
+    # velocities = [0.01]
     legends = []
     for velocity in velocities:
-        pressures, time_steps = pressures_every_delta_eq(particles, threshold, velocity, equilibrium_time, delta_eq)        
+        pressures, time_steps = pressures_every_delta_eq(
+            particles, threshold, velocity, equilibrium_time, delta_eq)
 
         # Plot
         plt.plot(time_steps, pressures)
-        legends.append(f"Presión con V0 = {velocity}")
+        legends.append(f"Presión con {r'$v_0$'} = {velocity} m/s")
 
+    plt.xlim(right=130)
     plt.legend(legends)
-    plt.xlabel("Tiempo de equilibrio (s)")
+    plt.xlabel("Tiempo (s)")
     plt.ylabel("Presión (N/m)")
     plt.show()
     plt.close()
-    
 
 
 if __name__ == "__main__":
