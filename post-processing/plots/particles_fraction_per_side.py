@@ -31,7 +31,7 @@ def particles_fraction_per_side_plot(particle_count, slit_width, threshold, equi
 
     # plot.legend(["100 particulas", "200 particulas", "350 particulas"])
     plot.legend(["Recinto izquierdo",
-                "Recinto derecho", "Umbral"], loc='upper right')
+                "Recinto derecho", f"Umbral ({threshold})"], loc='upper right')
     plot.savefig(
         f"particles_fraction_per_side_{particle_count}_{slit_width}_{threshold}.png", dpi=300,)
     plot.show()
